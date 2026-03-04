@@ -13,7 +13,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<div className="p-8">Signup page</div>} />
       </Routes>
-      <footer classname="min-h-screen flex flex-col bg-gray-50" >
+      <footer className="min-h-screen flex flex-col bg-gray-50" >
         <Footer />
       </footer>
     </div>
