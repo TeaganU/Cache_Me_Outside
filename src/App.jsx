@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -12,7 +13,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<div className="p-8">Signup page</div>} />
       </Routes>
+      <footer classname="min-h-screen flex flex-col bg-gray-50" >
+        <Footer />
+      </footer>
     </div>
+
   );
 }
 
