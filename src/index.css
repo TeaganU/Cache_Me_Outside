@@ -1,7 +1,1 @@
 @import "tailwindcss";
-
-@layer base {
-    button:hover {
-        cursor: pointer;
-    }
-}
