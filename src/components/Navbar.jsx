@@ -1,5 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Searchbar from "./Searchbar";
+import { PATHS } from "../Routes";
 
 export default function Navbar() {
   const isLoggedIn = false; // placeholder
@@ -11,12 +12,12 @@ export default function Navbar() {
       </div>
 
       <div className="flex gap-6 items-center">
-        <Link to="/">Home</Link>
-        <Link to="/skills">Skills</Link>
+        <Link to={PATHS.HOME}>Home</Link>
+        <Link to={PATHS.SKILLS}>Skills</Link>
         
         {isLoggedIn ? (
           <Link
-            to="/profile"
+            to={PATHS.PROFILE}
             className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-black text-white"
           >
             JD
@@ -24,13 +25,13 @@ export default function Navbar() {
         ) : (
           <>
             <Link 
-              to="/login"
+              to={PATHS.LOGIN}
             >
               Login
             </Link>
 
             <Link 
-              to="/signup" 
+              to={PATHS.SIGNUP}
               className="bg-black text-white px-4 py-1 rounded"
             >
               Sign Up
