@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import Searchbar from "./Searchbar";
-import { PATHS } from "../constants/Routes";
+import Searchbar from "../../features/search/components/SearchBar";
+import { PATHS } from "../../app/Routes";
 
 export default function Navbar() {
   const isLoggedIn = false; // placeholder

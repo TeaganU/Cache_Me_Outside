@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import Navbar from "./components/Navbar";
-import Login from "./pages/Login";
-import Footer from "./components/Footer";
+import Navbar from "../components/ui/Navbar";
+import Login from "../features/auth/pages/LoginPage";
+import Footer from "../components/ui/Footer";
 
-function App() {
+function App() {  
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
