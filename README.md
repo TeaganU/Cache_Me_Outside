@@ -1,6 +1,34 @@
 COSC360 - Project Proposal
 Owen Strolle - 68489996, Teagan Urquhart - 21161880
 
+## Quick Start
+
+### 1. Install Dependencies:
+
+Install packages for the root, client, and server:
+
+```bash
+npm install
+npm install --prefix client
+npm install --prefix server
+```
+
+This command:
+
+- Installs root-level dependencies
+- Installs dependencies in `client/` folder
+- Installs dependencies in `server/` folder
+
+### 2. Start the Server
+
+From the root directory:
+
+```bash
+npm start
+```
+
+### Project Proposal
+
 Duties of each team member:
 Owen Strolle - will work on the frontend of the website, such as html layout and the style using CSS. This will include all the pages on the website, including the admin dashboard.
 Teagan Urquhart - will work on the backend of the website, such as setting up the database, ensuring proper security of data, handling navigation errors, and analytics.
