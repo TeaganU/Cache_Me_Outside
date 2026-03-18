@@ -27,7 +27,7 @@ From the root directory:
 npm start
 ```
 
-### Project Proposal
+## Project Proposal
 
 Duties of each team member:
 Owen Strolle - will work on the frontend of the website, such as html layout and the style using CSS. This will include all the pages on the website, including the admin dashboard.
