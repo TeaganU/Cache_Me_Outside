@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import Searchbar from "../../features/search/components/SearchBar";
+import Searchbar from "../../features/search/components/SearchBar.jsx"
 import { PATHS } from "../../app/Routes";
 
 export default function Navbar() {
