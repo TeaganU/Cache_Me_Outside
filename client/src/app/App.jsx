@@ -2,6 +2,7 @@ import { Routes, Route, Link} from 'react-router-dom';
 import Navbar from "../components/ui/Navbar";
 import Login from "../features/auth/pages/LoginPage";
 import Footer from "../components/ui/Footer";
+import SkillsPage from '../features/skills/pages/SkillsPage';
 import CreatePostPage from "../features/posts/pages/CreatePostPage";
 
 //note: for lab 7, temporarily added a create post button on home page, to be changed later
@@ -12,7 +13,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<div className="p-8">Home page</div>} />
-        <Route path="/skills" element={<div className="p-8">Skills</div>} />
+        <Route path="/skills" element={<SkillsPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<div className="p-8">Signup page</div>} />
         <Route path="/profile" element={<div className="p-8">Profile page</div>} />
