@@ -47,6 +47,8 @@ export function getAllPosts() {
 }
 
 export function addPost(newPost) {
+  const posts = readPosts();
   posts.push(newPost);
+  writePosts(posts);
   return newPost;
 }
