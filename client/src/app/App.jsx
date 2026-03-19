@@ -1,4 +1,4 @@
-import { Routes, Route, Link} from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import Navbar from "../components/ui/Navbar";
 import Login from "../features/auth/pages/LoginPage";
 import Footer from "../components/ui/Footer";
@@ -7,7 +7,7 @@ import CreatePostPage from "../features/posts/pages/CreatePostPage";
 
 //note: for lab 7, temporarily added a create post button on home page, to be changed later
 
-function App() {  
+function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />

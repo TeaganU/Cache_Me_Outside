@@ -45,3 +45,8 @@ export function remove(id) {
 export function getAllPosts() {
   return findAll();
 }
+
+export function addPost(newPost) {
+  posts.push(newPost);
+  return newPost;
+}
