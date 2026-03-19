@@ -1,9 +1,9 @@
 import { createPostRecord, searchPosts } from "./posts.service.js";
 
-export function getPosts(req, res) {
+export async function getPosts(req, res) {
   const { search, category, type } = req.query;
 
-  const results = searchPosts({ search, category, type });
+  const results = await searchPosts({ search, category, type });
 
   res.json(results);
 }

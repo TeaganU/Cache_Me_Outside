@@ -1,12 +1,17 @@
 import { addPost, getAllPosts } from "./posts.repository.js";
 
-export function searchPosts({ search, category, type }) {
-  let posts = getAllPosts();
+export async function searchPosts({ search, category, type }) {
+  let posts = await getAllPosts();
 
   if (search) {
+    const normalizedSearch = search.toLowerCase();
+
     posts = posts.filter(post =>
-      post.title.toLowerCase().includes(search.toLowerCase()) ||
-      post.content.toLowerCase().includes(search.toLowerCase())
+      post.title.toLowerCase().includes(normalizedSearch) ||
+      post.content.toLowerCase().includes(normalizedSearch) ||
+      post.author.toLowerCase().includes(normalizedSearch) ||
+      post.category.toLowerCase().includes(normalizedSearch) ||
+      post.type.toLowerCase().includes(normalizedSearch)
     );
   }
 

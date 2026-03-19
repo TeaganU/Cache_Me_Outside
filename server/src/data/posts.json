@@ -1,6 +1,8 @@
 [
   {
     "id": 1,
+    "author": "John Doe",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Skill Guide",
     "category": "Rock Climbing",
     "title": "Rock Climbing Basics",
@@ -8,6 +10,8 @@
   },
   {
     "id": 2,
+    "author": "Jane Doe",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Event",
     "category": "Skiing",
     "title": "Backcountry Ski Trip",
@@ -15,6 +19,8 @@
   },
   {
     "id": 3,
+    "author": "Owen",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Discussion",
     "category": "Hiking",
     "title": "Best Hiking Trails Near Kelowna",
@@ -22,6 +28,8 @@
   },
   {
     "id": 4,
+    "author": "Jane Doe",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Skill Guide",
     "category": "Camping",
     "title": "How to Set Up a Campsite",
@@ -29,6 +37,8 @@
   },
   {
     "id": 5,
+    "author": "Teagan",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Event",
     "category": "Running",
     "title": "Trail Running Meetup",
@@ -36,6 +46,8 @@
   },
   {
     "id": 6,
+    "author": "John Doe",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Discussion",
     "category": "Kayaking",
     "title": "Best Lakes for Kayaking",
@@ -43,6 +55,8 @@
   },
   {
     "id": 7,
+    "author": "Santa",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Skill Guide",
     "category": "Skiing",
     "title": "Beginner Skiing Tips",
@@ -50,13 +64,17 @@
   },
   {
     "id": 8,
+    "author": "COSC360 Man",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Question",
     "category": "Rock Climbing",
     "title": "How do I improve grip strength for climbing?",
     "content": "Any tips or exercises that helped you improve grip strength?"
-    },
+  },
   {
     "id": 9,
+    "author": "Someone",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Discussion",
     "category": "Mountaineering",
     "title": "Getting Started with Mountaineering",
@@ -64,6 +82,8 @@
   },
   {
     "id": 10,
+    "author": "Someone2",
+    "timestamp": "2026-03-18T12:00:00Z",
     "type": "Skill Guide",
     "category": "Hiking",
     "title": "Packing Essentials for Day Hikes",
