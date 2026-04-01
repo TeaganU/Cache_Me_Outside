@@ -1,0 +1,25 @@
+import { RelativeTime } from "../../../lib/RelativeTime";
+
+export default function TrendingSkillsCard({ post }) {
+    return (
+        <div className="flex flex-col bg-white border 1px black w-65 min-w-50 p-2 rounded-lg gap-y-2">
+            <div className="flex justify-between text-xs">
+                <span>
+                    {post.category || "Category"}
+                </span>
+                <span>
+                    {RelativeTime(post.timestamp) || "Recently"}
+                </span>
+            </div>
+            <h1 className="font-bold text-xl">
+                {post.title || "Title"}
+            </h1>
+            <div className="flex items-center gap-3 mt-auto">
+                <div className="h-8 w-8 rounded-full bg-gray-200" />
+                <span className="text-sm font-medium text-gray-800">
+                    {post.author || "Author Name"}
+                </span>
+            </div>
+        </div>
+    )
+}
