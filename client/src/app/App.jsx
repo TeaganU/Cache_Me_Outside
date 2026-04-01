@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import HomePage from '../features/home/pages/HomePage';
 import Navbar from "../components/ui/Navbar";
 import Login from "../features/auth/pages/LoginPage";
 import Footer from "../components/ui/Footer";
@@ -13,7 +14,7 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <Routes>
-        <Route path={PATHS.HOME} element={<div className="p-8">Home page</div>} />
+        <Route path={PATHS.HOME} element={<HomePage />} />
         <Route path={PATHS.SKILLS} element={<SkillsPage />} />
         <Route path={PATHS.CREATEPOST} element={<CreatePostPage />} />
         <Route path={PATHS.LOGIN} element={<Login />} />
