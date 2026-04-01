@@ -1,53 +1,60 @@
-import { addPost, getAllPosts } from "./posts.repository.js";
+import {
+  addPost,
+  findPosts,
+  updatePostById,
+  deletePostById
+} from "./posts.repository.js";
 
-export async function searchPosts({ search, category, type }) {
-  let posts = await getAllPosts();
-
-  if (search) {
-    const normalizedSearch = search.toLowerCase();
-    const matchesSearch = value =>
-      String(value ?? "").toLowerCase().includes(normalizedSearch);
-
-    posts = posts.filter(post =>
-      matchesSearch(post.title) ||
-      matchesSearch(post.content) ||
-      matchesSearch(post.author) ||
-      matchesSearch(post.category) ||
-      matchesSearch(post.type)
-    );
+function requireString(value, fieldName) {
+  if (typeof value !== "string" || value.trim() === "") {
+    throw new Error(`${fieldName} is required`);
   }
-
-  if (category && category !== "All") {
-    posts = posts.filter(post => post.category === category);
-  }
-
-  if (type && type !== "All") {
-    posts = posts.filter(post => post.type === type);
-  }
-
-  return posts;
+  return value.trim();
 }
 
-export function createPostRecord({ type, category, title, content }) {
-  if (!title || !content) {
-    throw new Error("Missing required fields");
-  }
+export async function searchPosts({ search, category, type }) {
+  return await findPosts({ search, category, type });
+}
 
-  const posts = getAllPosts();
-  const maxId = posts.reduce(
-    (currentMax, post) => Math.max(currentMax, Number(post.id) || 0),
-    0
-  );
+export async function createPostRecord(body) {
+  const type = requireString(body.type, "type");
+  const category = requireString(body.category, "category");
+  const title = requireString(body.title, "title");
+  const content = requireString(body.content, "content");
 
-  const newPost = {
-    id: maxId + 1,
-    author: "Guest",
-    timestamp: new Date().toISOString(),
+  return await addPost({
     type,
     category,
     title,
     content
-  };
+  });
+}
 
-  return addPost(newPost);
+export async function updatePostRecord(idParam, body) {
+  const id = Number(idParam);
+  if (!Number.isFinite(id)) throw new Error("Invalid post id");
+
+  const updates = {};
+
+  if (body.type !== undefined) updates.type = requireString(body.type, "type");
+  if (body.category !== undefined) updates.category = requireString(body.category, "category");
+  if (body.title !== undefined) updates.title = requireString(body.title, "title");
+  if (body.content !== undefined) updates.content = requireString(body.content, "content");
+
+  if (Object.keys(updates).length === 0) {
+    throw new Error("No valid fields provided to update");
+  }
+
+  const updated = await updatePostById(id, updates);
+  if (!updated) throw new Error("Post not found");
+
+  return updated;
+}
+
+export async function deletePostRecord(idParam) {
+  const id = Number(idParam);
+  if (!Number.isFinite(id)) throw new Error("Invalid post id");
+
+  const deleted = await deletePostById(id);
+  if (!deleted) throw new Error("Post not found");
 }

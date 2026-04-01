@@ -1,54 +1,60 @@
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import Post from "../../models/Post.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const POSTS_FILE = path.resolve(__dirname, "../../data/posts.json");
+function buildQuery({ search, category, type }) {
+  const query = {};
 
-function readPosts() {
-  const fileContents = fs.readFileSync(POSTS_FILE, "utf-8");
-  return JSON.parse(fileContents);
-}
-
-function writePosts(posts) {
-  fs.writeFileSync(POSTS_FILE, JSON.stringify(posts, null, 2));
-}
-
-export function findAll() {
-  return readPosts();
-}
-
-export function findById(id) {
-  return readPosts().find(post => post.id === id);
-}
-
-export function save(post) {
-  const posts = readPosts();
-  const index = posts.findIndex(existingPost => existingPost.id === post.id);
-
-  if (index >= 0) {
-    posts[index] = post;
-  } else {
-    posts.push(post);
+  if (category && String(category).trim() !== "") {
+    query.category = String(category).trim();
   }
 
-  writePosts(posts);
-  return post;
+  if (type && String(type).trim() !== "") {
+    query.type = String(type).trim();
+  }
+
+  if (search && String(search).trim() !== "") {
+    const q = String(search).trim();
+    const rx = new RegExp(q, "i");
+
+    query.$or = [
+      { title: rx },
+      { content: rx },
+      { author: rx },
+      { category: rx },
+      { type: rx }
+    ];
+  }
+
+  return query;
 }
 
-export function remove(id) {
-  const posts = readPosts().filter(post => post.id !== id);
-  writePosts(posts);
+export async function findPosts(filters = {}) {
+  const query = buildQuery(filters);
+  return await Post.find(query).sort({ timestamp: -1 }).lean();
 }
 
-export function getAllPosts() {
-  return findAll();
+export async function addPost(newPost) {
+  const max = await Post.findOne().sort({ id: -1 }).select("id").lean();
+  const nextId = (max?.id ?? 0) + 1;
+
+  const doc = new Post({
+    id: nextId,
+    author: "Guest",
+    timestamp: new Date().toISOString(),
+    ...newPost
+  });
+
+  return await doc.save();
 }
 
-export function addPost(newPost) {
-  const posts = readPosts();
-  posts.push(newPost);
-  writePosts(posts);
-  return newPost;
+export async function updatePostById(id, updates) {
+  return await Post.findOneAndUpdate(
+    { id },
+    { $set: updates },
+    { new: true }
+  ).lean();
+}
+
+export async function deletePostById(id) {
+  const result = await Post.deleteOne({ id });
+  return result.deletedCount === 1;
 }
