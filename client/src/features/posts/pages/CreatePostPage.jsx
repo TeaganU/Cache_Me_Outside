@@ -60,10 +60,10 @@ function CreatePostPage() {
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <select name="type" value={form.type} onChange={handleChange}>
-                    <option value="question">Question</option>
-                    <option value="skill guide">Skill Guide</option>
-                    <option value="discussion">Discussion</option>
-                    <option value="event">Event</option>
+                    <option value="Question">Question</option>
+                    <option value="Skill guide">Skill Guide</option>
+                    <option value="Discussion">Discussion</option>
+                    <option value="Event">Event</option>
                 </select>
 
                 <select
