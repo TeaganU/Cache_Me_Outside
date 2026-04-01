@@ -61,8 +61,31 @@ function SkillsPage() {
             setError("");
 
             try {
-                const endpoint = searchText.trim()
-                    ? `/api/posts?search=${encodeURIComponent(searchText)}`
+                const params = new URLSearchParams();
+
+                // Preserve the navbar search term in the API request.
+                if (searchText.trim()) {
+                    params.set("search", searchText.trim());
+                }
+
+                // Append each selected category so the backend can treat them
+                // as repeated query params.
+                selectedCategories
+                    .filter((category) => category !== "All")
+                    .forEach((category) => {
+                        params.append("category", category);
+                    });
+
+                // Append each selected type the same way.
+                selectedTypes
+                    .filter((type) => type !== "All")
+                    .forEach((type) => {
+                        params.append("type", type);
+                    });
+
+                // If no filters are active, just fetch all posts.
+                const endpoint = params.toString()
+                    ? `/api/posts?${params.toString()}`
                     : "/api/posts";
                 const response = await fetch(endpoint);
 
@@ -81,8 +104,9 @@ function SkillsPage() {
         }
 
         fetchResults();
-    }, [searchText]);
+    }, [searchText, selectedCategories, selectedTypes]);
 
+    // "All" acts like a reset; otherwise this toggles individual checkbox values.
     const toggleFilter = (value, selectedValues, setSelectedValues) => {
         if (value === "All") {
             setSelectedValues(["All"]);
@@ -96,20 +120,6 @@ function SkillsPage() {
 
         setSelectedValues(nextValues.length > 0 ? nextValues : ["All"]);
     };
-
-    const filteredResults = results.filter((post) => {
-        const matchesCategory = selectedCategories.includes("All")
-            || selectedCategories.some(
-                (category) => category.toLowerCase() === String(post.category || "").toLowerCase()
-            );
-
-        const matchesType = selectedTypes.includes("All")
-            || selectedTypes.some(
-                (type) => type.toLowerCase() === String(post.type || "").toLowerCase()
-            );
-
-        return matchesCategory && matchesType;
-    });
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -186,9 +196,9 @@ function SkillsPage() {
 
                     {error && <p className="text-red-600">{error}</p>}
 
-                    {!loading && !error && filteredResults.length > 0 && (
+                    {!loading && !error && results.length > 0 && (
                         <div className="space-y-4">
-                            {filteredResults.map((post) => (
+                            {results.map((post) => (
                                 <article
                                     key={post._id ?? post.id}
                                     className="border border-gray-300 bg-white p-4"
@@ -225,7 +235,7 @@ function SkillsPage() {
                         </div>
                     )}
 
-                    {!loading && !error && filteredResults.length === 0 && (
+                    {!loading && !error && results.length === 0 && (
                         <p className="text-gray-600">
                             {searchText
                                 ? "No matching results found for this search and filter combination."
