@@ -54,6 +54,14 @@ function SkillsPage() {
     const [error, setError] = useState("");
     const [selectedCategories, setSelectedCategories] = useState(["All"]);
     const [selectedTypes, setSelectedTypes] = useState(["All"]);
+    const [editingPostId, setEditingPostId] = useState(null);
+    const [editForm, setEditForm] = useState({
+        title: "",
+        content: "",
+        category: "Hiking",
+        type: "question"
+    });
+    const [actionMessage, setActionMessage] = useState("");
 
     useEffect(() => {
         async function fetchResults() {
@@ -119,6 +127,85 @@ function SkillsPage() {
             : [...withoutAll, value];
 
         setSelectedValues(nextValues.length > 0 ? nextValues : ["All"]);
+    };
+
+    const startEdit = (post) => {
+        setEditingPostId(post.id);
+        setEditForm({
+            title: post.title || "",
+            content: post.content || "",
+            category: post.category || "Hiking",
+            type: post.type || "question"
+        });
+        setActionMessage("");
+    };
+
+    const cancelEdit = () => {
+        setEditingPostId(null);
+        setActionMessage("");
+    };
+
+    const handleEditChange = (e) => {
+        setEditForm({
+            ...editForm,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const saveEdit = async (postId) => {
+        try {
+            const response = await fetch(`/api/posts/${postId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(editForm)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setActionMessage(data.message || "Could not update post.");
+                return;
+            }
+
+            setResults((currentResults) =>
+                currentResults.map((post) =>
+                    post.id === postId ? data.post : post
+                )
+            );
+            setEditingPostId(null);
+            setActionMessage("");
+        } catch {
+            setActionMessage("Could not update post.");
+        }
+    };
+
+    const deletePost = async (postId) => {
+        try {
+            const response = await fetch(`/api/posts/${postId}`, {
+                method: "DELETE"
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                setActionMessage(data.message || "Could not delete post.");
+                return;
+            }
+
+            setResults((currentResults) =>
+                currentResults.filter((post) => post.id !== postId)
+            );
+
+            if (editingPostId === postId) {
+                setEditingPostId(null);
+            }
+
+            setActionMessage("");
+        } catch {
+            setActionMessage("Could not delete post.");
+        }
     };
 
     return (
@@ -195,6 +282,7 @@ function SkillsPage() {
                     {loading && <p className="text-gray-600">Loading...</p>}
 
                     {error && <p className="text-red-600">{error}</p>}
+                    {actionMessage && <p className="mb-4 text-red-600">{actionMessage}</p>}
 
                     {!loading && !error && results.length > 0 && (
                         <div className="space-y-4">
@@ -218,16 +306,101 @@ function SkillsPage() {
                                         {post.title}
                                     </h2>
 
-                                    <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">
-                                        {post.content}
-                                    </p>
+                                    {editingPostId === post.id ? (
+                                        <div className="mt-3 flex flex-col gap-3">
+                                            <input
+                                                type="text"
+                                                name="title"
+                                                value={editForm.title}
+                                                onChange={handleEditChange}
+                                                className="border border-gray-300 px-3 py-2"
+                                            />
+
+                                            <div className="flex flex-col gap-3 sm:flex-row">
+                                                <select
+                                                    name="category"
+                                                    value={editForm.category}
+                                                    onChange={handleEditChange}
+                                                    className="border border-gray-300 px-3 py-2"
+                                                >
+                                                    <option value="Hiking">Hiking</option>
+                                                    <option value="Skiing">Skiing</option>
+                                                    <option value="Rock Climbing">Rock Climbing</option>
+                                                    <option value="Mountaineering">Mountaineering</option>
+                                                    <option value="Kayaking">Kayaking</option>
+                                                    <option value="Running">Running</option>
+                                                    <option value="Camping">Camping</option>
+                                                </select>
+
+                                                <select
+                                                    name="type"
+                                                    value={editForm.type}
+                                                    onChange={handleEditChange}
+                                                    className="border border-gray-300 px-3 py-2"
+                                                >
+                                                    <option value="question">Question</option>
+                                                    <option value="skill guide">Skill Guide</option>
+                                                    <option value="discussion">Discussion</option>
+                                                    <option value="event">Event</option>
+                                                </select>
+                                            </div>
+
+                                            <textarea
+                                                name="content"
+                                                value={editForm.content}
+                                                onChange={handleEditChange}
+                                                rows={5}
+                                                className="border border-gray-300 px-3 py-2"
+                                            />
+
+                                            <div className="flex gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => saveEdit(post.id)}
+                                                    className="bg-black px-4 py-2 text-white"
+                                                >
+                                                    Save
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={cancelEdit}
+                                                    className="border border-gray-300 px-4 py-2"
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">
+                                            {post.content}
+                                        </p>
+                                    )}
 
                                     <div className="mt-4 border-t border-gray-200 pt-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-8 w-8 rounded-full bg-gray-200" />
-                                            <span className="text-sm font-medium text-gray-800">
-                                                {post.author || "Author Name"}
-                                            </span>
+                                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-8 w-8 rounded-full bg-gray-200" />
+                                                <span className="text-sm font-medium text-gray-800">
+                                                    {post.author || "Author Name"}
+                                                </span>
+                                            </div>
+
+                                            <div className="flex gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => startEdit(post)}
+                                                    className="border border-gray-300 px-3 py-1 text-sm"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => deletePost(post.id)}
+                                                    className="border border-red-300 px-3 py-1 text-sm text-red-600"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </article>
