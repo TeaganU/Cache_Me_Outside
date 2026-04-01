@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/TeaganU/Cache_Me_Outside#readme",
   "dependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "mongoose": "^9.3.3"
   }
 }

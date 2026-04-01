@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Navbar from "../components/ui/Navbar";
 import Login from "../features/auth/pages/LoginPage";
 import Footer from "../components/ui/Footer";
@@ -15,16 +15,11 @@ function App() {
       <Routes>
         <Route path={PATHS.HOME} element={<div className="p-8">Home page</div>} />
         <Route path={PATHS.SKILLS} element={<SkillsPage />} />
+        <Route path={PATHS.CREATEPOST} element={<CreatePostPage />} />
         <Route path={PATHS.LOGIN} element={<Login />} />
         <Route path={PATHS.SIGNUP} element={<div className="p-8">Signup page</div>} />
         <Route path={PATHS.PROFILE} element={<div className="p-8">Profile page</div>} />
-        <Route path={PATHS.CREATEPOST} element={<CreatePostPage />} />
       </Routes>
-      <main className="flex-1">
-        <Link to="/create-post" className="bg-black text-white px-4 py-2 rounded">
-          Create Post
-        </Link>
-      </main>
       <Footer />
     </div>
 

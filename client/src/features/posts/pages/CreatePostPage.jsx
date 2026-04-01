@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function CreatePostPage() {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         type: "question",
-        category: "",
+        category: "Hiking",
         title: "",
         content: ""
     });
@@ -21,7 +23,7 @@ function CreatePostPage() {
         e.preventDefault();
 
         try {
-            const res = await fetch("http://localhost:4000/api/posts", {
+            const res = await fetch("/api/posts", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -38,14 +40,14 @@ function CreatePostPage() {
 
             setMessage(data.message);
 
-            //to clear form
             setForm({
                 type: "question",
-                category: "",
+                category: "Hiking",
                 title: "",
                 content: ""
             });
 
+            navigate("/skills");
         } catch (err) {
             console.error(err);
             setMessage("There was an error createing the post");
@@ -57,8 +59,6 @@ function CreatePostPage() {
             <h1 className="text-2xl mb-4">Create Post</h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
-                {/* post type */}
                 <select name="type" value={form.type} onChange={handleChange}>
                     <option value="question">Question</option>
                     <option value="skill guide">Skill Guide</option>
@@ -66,16 +66,20 @@ function CreatePostPage() {
                     <option value="event">Event</option>
                 </select>
 
-                {/* skill category (just text for now but can be select an option once we decide all the categories) */}
-                <input
-                    type="text"
+                <select
                     name="category"
-                    placeholder="Skill Category (e.g. Climbing)"
                     value={form.category}
                     onChange={handleChange}
-                />
+                >
+                    <option value="Hiking">Hiking</option>
+                    <option value="Skiing">Skiing</option>
+                    <option value="Rock Climbing">Rock Climbing</option>
+                    <option value="Mountaineering">Mountaineering</option>
+                    <option value="Kayaking">Kayaking</option>
+                    <option value="Running">Running</option>
+                    <option value="Camping">Camping</option>
+                </select>
 
-                {/* post title */}
                 <input
                     type="text"
                     name="title"
@@ -84,7 +88,6 @@ function CreatePostPage() {
                     onChange={handleChange}
                 />
 
-                {/* main text body of the post */}
                 <textarea
                     name="content"
                     placeholder="Write your post..."
@@ -103,6 +106,3 @@ function CreatePostPage() {
 }
 
 export default CreatePostPage;
-
-
-

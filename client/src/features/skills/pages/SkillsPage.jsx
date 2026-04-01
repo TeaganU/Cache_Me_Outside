@@ -1,5 +1,50 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { PATHS } from "../../../app/Routes";
+
+const categoryOptions = [
+    "All",
+    "Hiking",
+    "Skiing",
+    "Rock Climbing",
+    "Mountaineering",
+    "Kayaking",
+    "Running",
+    "Camping"
+];
+
+const typeOptions = [
+    "All",
+    "Discussion",
+    "Skill Guide",
+    "Question",
+    "Event"
+];
+
+function formatRelativeTime(timestamp) {
+    if (!timestamp) {
+        return "Recently";
+    }
+
+    const postDate = new Date(timestamp);
+    if (Number.isNaN(postDate.getTime())) {
+        return "Recently";
+    }
+
+    const diffMs = Date.now() - postDate.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+    if (diffDays > 0) {
+        return `${diffDays} Day${diffDays === 1 ? "" : "s"} Ago`;
+    }
+
+    if (diffHours > 0) {
+        return `${diffHours} Hour${diffHours === 1 ? "" : "s"} Ago`;
+    }
+
+    return "Today";
+}
 
 function SkillsPage() {
     const [searchParams] = useSearchParams();
@@ -7,22 +52,19 @@ function SkillsPage() {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [selectedCategories, setSelectedCategories] = useState(["All"]);
+    const [selectedTypes, setSelectedTypes] = useState(["All"]);
 
     useEffect(() => {
         async function fetchResults() {
-            if (!searchText.trim()) {
-                setResults([]);
-                setError("");
-                return;
-            }
-
             setLoading(true);
             setError("");
 
             try {
-                const response = await fetch(
-                    `/api/posts?search=${encodeURIComponent(searchText)}`
-                );
+                const endpoint = searchText.trim()
+                    ? `/api/posts?search=${encodeURIComponent(searchText)}`
+                    : "/api/posts";
+                const response = await fetch(endpoint);
 
                 if (!response.ok) {
                     throw new Error("Failed to fetch results");
@@ -41,37 +83,157 @@ function SkillsPage() {
         fetchResults();
     }, [searchText]);
 
+    const toggleFilter = (value, selectedValues, setSelectedValues) => {
+        if (value === "All") {
+            setSelectedValues(["All"]);
+            return;
+        }
+
+        const withoutAll = selectedValues.filter((item) => item !== "All");
+        const nextValues = withoutAll.includes(value)
+            ? withoutAll.filter((item) => item !== value)
+            : [...withoutAll, value];
+
+        setSelectedValues(nextValues.length > 0 ? nextValues : ["All"]);
+    };
+
+    const filteredResults = results.filter((post) => {
+        const matchesCategory = selectedCategories.includes("All")
+            || selectedCategories.some(
+                (category) => category.toLowerCase() === String(post.category || "").toLowerCase()
+            );
+
+        const matchesType = selectedTypes.includes("All")
+            || selectedTypes.some(
+                (type) => type.toLowerCase() === String(post.type || "").toLowerCase()
+            );
+
+        return matchesCategory && matchesType;
+    });
+
     return (
-        <div className="p-8">
-            <h1 className="text-gray-700">
-                <Link to="/" className="hover:underline">
-                    Home
-                </Link>{" "}
-                &gt;{" "}
-                <Link to="/skills" className="hover:underline">
-                    Skills
-                </Link>
-            </h1>
+        <div className="min-h-screen bg-gray-100">
+            <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-8 md:flex-row">
+                <aside className="w-full border border-gray-300 bg-white p-5 md:max-w-xs">
+                    <h2 className="text-2xl font-semibold text-gray-900">Filters</h2>
 
-            {searchText ? (
-                <p className="mt-4">Search results for: {searchText}</p>
-            ) : (
-                <p className="mt-4"></p>
-            )}
+                    <section className="mt-6">
+                        <h3 className="text-lg font-medium text-gray-900">Categories</h3>
+                        <div className="mt-3 space-y-2 text-base text-gray-800">
+                            {categoryOptions.map((category) => (
+                                <label key={category} className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedCategories.includes(category)}
+                                        onChange={() => toggleFilter(category, selectedCategories, setSelectedCategories)}
+                                        className="h-4 w-4 border-gray-400"
+                                    />
+                                    <span>{category}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </section>
 
-            {loading && <p className="mt-4">Loading...</p>}
+                    <section className="mt-6">
+                        <h3 className="text-lg font-medium text-gray-900">Post Type</h3>
+                        <div className="mt-3 space-y-2 text-base text-gray-800">
+                            {typeOptions.map((type) => (
+                                <label key={type} className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedTypes.includes(type)}
+                                        onChange={() => toggleFilter(type, selectedTypes, setSelectedTypes)}
+                                        className="h-4 w-4 border-gray-400"
+                                    />
+                                    <span>{type}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </section>
+                </aside>
 
-            {error && <p className="mt-4">{error}</p>}
+                <main className="min-w-0 flex-1">
+                    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                            <p className="text-sm text-gray-500">
+                                <Link to="/" className="hover:underline">
+                                    Home
+                                </Link>{" "}
+                                &gt;{" "}
+                                <Link to="/skills" className="hover:underline">
+                                    Skills
+                                </Link>
+                            </p>
+                            <h1 className="mt-2 text-3xl font-semibold text-gray-900">
+                                Browse Skills
+                            </h1>
+                            {searchText && (
+                                <p className="mt-2 text-sm text-gray-600">
+                                    Search results for: {searchText}
+                                </p>
+                            )}
+                        </div>
 
-            {!loading && !error && results.length > 0 && (
-                <pre className="mt-4 whitespace-pre-wrap rounded bg-white p-4">
-                    {JSON.stringify(results, null, 2)}
-                </pre>
-            )}
+                        <Link
+                            to={PATHS.CREATEPOST}
+                            className="inline-block bg-black px-4 py-2 text-white"
+                        >
+                            Create Post
+                        </Link>
+                    </div>
 
-            {!loading && !error && searchText && results.length === 0 && (
-                <p className="mt-4">No matching results found.</p>
-            )}
+                    {loading && <p className="text-gray-600">Loading...</p>}
+
+                    {error && <p className="text-red-600">{error}</p>}
+
+                    {!loading && !error && filteredResults.length > 0 && (
+                        <div className="space-y-4">
+                            {filteredResults.map((post) => (
+                                <article
+                                    key={post._id ?? post.id}
+                                    className="border border-gray-300 bg-white p-4"
+                                >
+                                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                        <div className="text-sm text-gray-600">
+                                            <span>{post.category || "Category"}</span>
+                                            <span className="mx-2">|</span>
+                                            <span>{post.type || "Type"}</span>
+                                        </div>
+                                        <span className="text-sm text-gray-500">
+                                            {formatRelativeTime(post.timestamp)}
+                                        </span>
+                                    </div>
+
+                                    <h2 className="mt-3 text-2xl font-semibold text-gray-900">
+                                        {post.title}
+                                    </h2>
+
+                                    <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">
+                                        {post.content}
+                                    </p>
+
+                                    <div className="mt-4 border-t border-gray-200 pt-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-8 w-8 rounded-full bg-gray-200" />
+                                            <span className="text-sm font-medium text-gray-800">
+                                                {post.author || "Author Name"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    )}
+
+                    {!loading && !error && filteredResults.length === 0 && (
+                        <p className="text-gray-600">
+                            {searchText
+                                ? "No matching results found for this search and filter combination."
+                                : "No posts match the selected filters yet."}
+                        </p>
+                    )}
+                </main>
+            </div>
         </div>
     );
 }
