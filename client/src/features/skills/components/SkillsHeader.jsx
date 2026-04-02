@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { PATHS } from "../../../lib/Routes";
+import { PATHS } from "../../../app/Routes";
 
 export default function SkillsHeader({ searchText }) {
     return (
