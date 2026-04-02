@@ -9,6 +9,8 @@ export default function PostComments({
     onCancelCreateComment,
     onSubmitComment
 }) {
+    const safeComments = comments ?? [];
+
     return (
         <section className="mt-6 border border-gray-300 bg-white p-4">
             <div className="flex items-center justify-between gap-3">
@@ -24,20 +26,20 @@ export default function PostComments({
                 )}
             </div>
 
-            {comments.length === 0 && !isCreatingComment && (
+            {safeComments.length === 0 && !isCreatingComment && (
                 <p className="mt-4 text-sm text-gray-600">No comments</p>
             )}
 
-            {comments.length > 0 && (
+            {safeComments.length > 0 && (
                 <div className="mt-4 space-y-3">
-                    {comments.map((comment, index) => (
-                        <div key={`${comment.timestamp}-${index}`} className="border border-gray-200 p-3">
+                    {safeComments.map((comment, index) => (
+                        <div key={comment._id ?? index} className="border border-gray-200 p-3">
                             <div className="flex items-center justify-between gap-3">
                                 <span className="text-sm font-medium text-gray-800">
-                                    {comment.author || "Guest"}
+                                    {comment.authorUsername || "Guest"}
                                 </span>
                                 <span className="text-xs text-gray-500">
-                                    {RelativeTime(comment.timestamp)}
+                                    {RelativeTime(comment.createdAt)}
                                 </span>
                             </div>
                             <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">

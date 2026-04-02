@@ -23,7 +23,7 @@ export default function RecentQuestions() {
                 const data = await response.json();
                 const recentPosts = [...data]
                     .filter((type) => type.type === "Question")
-                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                     .slice(0, 5);
 
                 setPosts(recentPosts);
@@ -59,7 +59,7 @@ export default function RecentQuestions() {
 
                 {!loading && !error && posts.map((post) => (
                     <RecentQuestionsCard
-                        key={post._id ?? post.id}
+                        key={post._id}
                         post={post}
                     />
                 ))}

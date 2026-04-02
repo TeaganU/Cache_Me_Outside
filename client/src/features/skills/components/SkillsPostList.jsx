@@ -5,7 +5,7 @@ export default function SkillsPostList({ posts }) {
         <div className="space-y-4">
             {posts.map((post) => (
                 <SkillsPostCard
-                    key={post._id ?? post.id}
+                    key={post._id}
                     post={post}
                 />
             ))}

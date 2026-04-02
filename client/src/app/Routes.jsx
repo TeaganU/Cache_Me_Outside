@@ -1,7 +1,7 @@
 export const PATHS = {
     HOME: "/",
     SKILLS: "/skills",
-    POST: (id) => `/posts/${id}`,
+    POST: (_id) => `/posts/${_id}`,
     CREATEPOST: "/create-post",
     LOGIN: "/login",
     SIGNUP: "/signup",

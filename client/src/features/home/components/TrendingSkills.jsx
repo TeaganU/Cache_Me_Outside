@@ -22,8 +22,8 @@ export default function TrendingSkills() {
 
                 const data = await response.json();
                 const recentPosts = [...data]
-                    // Currently sorting by date until we add in post metrics
                     .sort((a, b) => {
+                        const viewDiff = (b.views || 0) - (a.views || 0);
                         const likesDiff = (b.likes || 0) - (a.likes || 0);
 
                         if (likesDiff !== 0) {
@@ -66,7 +66,7 @@ export default function TrendingSkills() {
 
                 {!loading && !error && posts.map((post) => (
                     <TrendingSkillsCard
-                        key={post._id ?? post.id}
+                        key={post._id}
                         post={post}
                     />
                 ))}

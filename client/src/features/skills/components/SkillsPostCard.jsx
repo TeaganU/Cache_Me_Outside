@@ -6,7 +6,7 @@ export default function SkillsPostCard({
     post
 }) {
     return (
-        <Link to={PATHS.POST(post.id)}
+        <Link to={PATHS.POST(post._id)}
             className="flex flex-col bg-white border border-gray-300 p-4
             hover:cursor-pointer hover:border-gray-500 hover:-translate-y-0.5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -16,7 +16,7 @@ export default function SkillsPostCard({
                     <span>{post.type || "Type"}</span>
                 </div>
                 <span className="text-sm text-gray-500">
-                    {RelativeTime(post.timestamp)}
+                    {RelativeTime(post.createdAt)}
                 </span>
             </div>
 
@@ -35,7 +35,7 @@ export default function SkillsPostCard({
                     <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-full bg-gray-200" />
                         <span className="text-sm font-medium text-gray-800">
-                            {post.author || "Author Name"}
+                            {post.authorUsername || "Author Name"}
                         </span>
                     </div>
 
