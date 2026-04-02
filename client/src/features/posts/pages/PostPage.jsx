@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { RelativeTime } from "../../../lib/RelativeTime";
 import { editableCategoryOptions, editablePostTypeOptions} from "../../skills/components/skillsOptions";
 import PostComments from "../components/PostComments";
+import { PATHS } from "../../../app/Routes";
 
 export default function PostPage() {
     const { id } = useParams();
@@ -183,7 +184,11 @@ export default function PostPage() {
         <div className="min-h-screen bg-gray-100">
             <div className="mx-auto max-w-4xl px-6 py-8">
                 <p className="text-sm text-gray-500">
-                    <Link to="/skills" className="hover:underline">
+                    <Link to={PATHS.HOME} className="hover:underline">
+                        Home
+                    </Link>{" "}
+                    &gt;
+                    <Link to={PATHS.SKILLS} className="hover:underline">
                         Skills
                     </Link>{" "}
                     &gt; Post

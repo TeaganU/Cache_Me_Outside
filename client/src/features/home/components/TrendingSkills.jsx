@@ -23,7 +23,15 @@ export default function TrendingSkills() {
                 const data = await response.json();
                 const recentPosts = [...data]
                     // Currently sorting by date until we add in post metrics
-                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                    .sort((a, b) => {
+                        const likesDiff = (b.likes || 0) - (a.likes || 0);
+
+                        if (likesDiff !== 0) {
+                            return likesDiff;
+                        }
+
+                        return (b.comments?.length || 0) - (a.comments?.length || 0);
+                    })
                     .slice(0, 6);
 
                 setPosts(recentPosts);
