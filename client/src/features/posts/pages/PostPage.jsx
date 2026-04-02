@@ -187,7 +187,7 @@ export default function PostPage() {
                     <Link to={PATHS.HOME} className="hover:underline">
                         Home
                     </Link>{" "}
-                    &gt;
+                    &gt;{" "}
                     <Link to={PATHS.SKILLS} className="hover:underline">
                         Skills
                     </Link>{" "}
