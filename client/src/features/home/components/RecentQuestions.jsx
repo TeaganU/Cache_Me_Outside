@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { PATHS } from "../../../app/Routes";
+import { PATHS } from "../../../lib/Routes";
 import { useEffect, useState } from "react";
 import RecentQuestionsCard from "./RecentQuestionsCard";
 
