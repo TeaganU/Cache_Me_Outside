@@ -1,6 +1,7 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { PATHS } from "../../../app/Routes";
+import { RelativeTime } from "../../../lib/RelativeTime";
 
 const categoryOptions = [
     "All",
@@ -20,31 +21,6 @@ const typeOptions = [
     "Question",
     "Event"
 ];
-
-function formatRelativeTime(timestamp) {
-    if (!timestamp) {
-        return "Recently";
-    }
-
-    const postDate = new Date(timestamp);
-    if (Number.isNaN(postDate.getTime())) {
-        return "Recently";
-    }
-
-    const diffMs = Date.now() - postDate.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
-    if (diffDays > 0) {
-        return `${diffDays} Day${diffDays === 1 ? "" : "s"} Ago`;
-    }
-
-    if (diffHours > 0) {
-        return `${diffHours} Hour${diffHours === 1 ? "" : "s"} Ago`;
-    }
-
-    return "Today";
-}
 
 function SkillsPage() {
     const [searchParams] = useSearchParams();
@@ -298,7 +274,7 @@ function SkillsPage() {
                                             <span>{post.type || "Type"}</span>
                                         </div>
                                         <span className="text-sm text-gray-500">
-                                            {formatRelativeTime(post.timestamp)}
+                                            {RelativeTime(post.timestamp)}
                                         </span>
                                     </div>
 

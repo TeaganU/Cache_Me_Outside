@@ -51,7 +51,7 @@ export default function TrendingSkills() {
                     View All
                 </Link>
             </div>
-            <div className="flex flex-row justify-between gap-3 overflow-x-auto flex-1">
+            <div className="flex flex-row justify-between gap-3 overflow-x-auto flex-1 p-2">
                 {loading && <p className="text-sm text-gray-600">Loading trending skills...</p>}
 
                 {error && <p className="text-sm text-red-600">{error}</p>}

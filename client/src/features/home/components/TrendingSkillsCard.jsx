@@ -2,7 +2,8 @@ import { RelativeTime } from "../../../lib/RelativeTime";
 
 export default function TrendingSkillsCard({ post }) {
     return (
-        <div className="flex flex-col bg-white border 1px black w-65 min-w-50 p-2 rounded-lg gap-y-2">
+        <section className="flex flex-col bg-white border 1px black w-65 min-w-50 p-2 rounded-lg gap-y-2
+        hover:cursor-pointer hover:border-gray-500 hover:-translate-y-0.5">
             <div className="flex justify-between text-xs">
                 <span>
                     {post.category || "Category"}
@@ -20,6 +21,6 @@ export default function TrendingSkillsCard({ post }) {
                     {post.author || "Author Name"}
                 </span>
             </div>
-        </div>
+        </section>
     )
 }
