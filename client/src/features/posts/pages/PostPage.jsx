@@ -279,7 +279,7 @@ export default function PostPage() {
                                 <button
                                     type="button"
                                     onClick={likePost}
-                                    className="border border-gray-300 px-3 py-2 text-sm"
+                                    className="border border-gray-300 px-3 py-2 text-sm hover:cursor-pointer"
                                 >
                                     Like ({post.likes || 0})
                                 </button>
@@ -289,14 +289,14 @@ export default function PostPage() {
                                         <button
                                             type="button"
                                             onClick={saveEdit}
-                                            className="bg-black px-3 py-2 text-sm text-white"
+                                            className="bg-black px-3 py-2 text-sm text-white hover:cursor-pointer"
                                         >
                                             Save
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setEditing(false)}
-                                            className="border border-gray-300 px-3 py-2 text-sm"
+                                            className="border border-gray-300 px-3 py-2 text-sm hover:cursor-pointer"
                                         >
                                             Cancel
                                         </button>
@@ -305,7 +305,7 @@ export default function PostPage() {
                                     <button
                                         type="button"
                                         onClick={() => setEditing(true)}
-                                        className="border border-gray-300 px-3 py-2 text-sm"
+                                        className="border border-gray-300 px-3 py-2 text-sm hover:cursor-pointer"
                                     >
                                         Edit
                                     </button>
@@ -314,7 +314,7 @@ export default function PostPage() {
                                 <button
                                     type="button"
                                     onClick={deletePost}
-                                    className="border border-red-300 px-3 py-2 text-sm text-red-600"
+                                    className="border border-red-300 px-3 py-2 text-sm text-red-600 hover:cursor-pointer"
                                 >
                                     Delete
                                 </button>

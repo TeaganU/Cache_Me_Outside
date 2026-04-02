@@ -17,7 +17,7 @@ export default function PostComments({
                     <button
                         type="button"
                         onClick={onOpenCreateComment}
-                        className="bg-black px-3 py-2 text-sm text-white"
+                        className="bg-black px-3 py-2 text-sm text-white hover:cursor-pointer"
                     >
                         Create Comment
                     </button>
@@ -62,14 +62,14 @@ export default function PostComments({
                         <button
                             type="button"
                             onClick={onSubmitComment}
-                            className="bg-black px-3 py-2 text-sm text-white"
+                            className="bg-black px-3 py-2 text-sm text-white hover:cursor-pointer"
                         >
                             Add Comment
                         </button>
                         <button
                             type="button"
                             onClick={onCancelCreateComment}
-                            className="border border-gray-300 px-3 py-2 text-sm"
+                            className="border border-gray-300 px-3 py-2 text-sm hover:cursor-pointer"
                         >
                             Cancel
                         </button>
