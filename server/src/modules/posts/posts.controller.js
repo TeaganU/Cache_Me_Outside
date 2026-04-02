@@ -3,7 +3,8 @@ import {
   getPostRecord,
   searchPosts,
   updatePostRecord,
-  deletePostRecord
+  deletePostRecord,
+  incrementPostViewsRecord
 } from "./posts.service.js";
 
 export async function getPosts(req, res) {
@@ -28,7 +29,7 @@ export async function getPost(req, res) {
 
 export async function createPost(req, res) {
   try {
-    const newPost = await createPostRecord(req.body);
+    const newPost = await createPostRecord(req.body, req.user ?? null);
 
     res.status(201).json({
       message: "Post successfully created",
@@ -45,6 +46,19 @@ export async function updatePost(req, res) {
 
     res.json({
       message: "Post successfully updated",
+      post: updated
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+}
+
+export async function incrementPostViews(req, res) {
+  try {
+    const updated = await incrementPostViewsRecord(req.params.id);
+
+    res.json({
+      message: "Post view count updated",
       post: updated
     });
   } catch (error) {

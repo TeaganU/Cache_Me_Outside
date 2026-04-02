@@ -1,30 +1,81 @@
 import mongoose from "mongoose";
 
+const commentSchema = new mongoose.Schema(
+  {
+    text: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    authorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    authorUsername: {
+      type: String,
+      default: "Guest",
+      trim: true,
+    },
+  },
+  {
+    _id: true,
+    timestamps: true,
+    versionKey: false,
+  }
+);
+
 const postSchema = new mongoose.Schema(
   {
-    id: { type: Number, unique: true, index: true },
-    author: { type: String, default: "Guest" },
-    timestamp: { type: String, default: () => new Date().toISOString() },
-    type: { type: String, required: true },
-    category: { type: String, required: true },
-    title: { type: String, required: true },
-    content: { type: String, required: true },
-    likes: { type: Number, default: 0 },
+    authorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    authorUsername: {
+      type: String,
+      default: "Guest",
+      trim: true,
+    },
+    type: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    content: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    likes: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    views: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     comments: {
-      type: [
-        new mongoose.Schema(
-          {
-            text: { type: String, required: true },
-            author: { type: String, default: "Guest" },
-            timestamp: { type: String, default: () => new Date().toISOString() }
-          },
-          { _id: false }
-        )
-      ],
-      default: []
-    }
+      type: [commentSchema],
+      default: [],
+    },
   },
-  { versionKey: false }
+  {
+    timestamps: true,
+    versionKey: false,
+  }
 );
 
 export default mongoose.model("Post", postSchema);

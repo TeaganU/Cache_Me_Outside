@@ -3,7 +3,8 @@ import {
   findPostById,
   findPosts,
   updatePostById,
-  deletePostById
+  deletePostById,
+  incrementPostViews
 } from "./posts.repository.js";
 
 function requireString(value, fieldName) {
@@ -18,16 +19,13 @@ export async function searchPosts({ search, category, type }) {
 }
 
 export async function getPostRecord(idParam) {
-  const id = Number(idParam);
-  if (!Number.isFinite(id)) throw new Error("Invalid post id");
-
-  const post = await findPostById(id);
+  const post = await findPostById(idParam);
   if (!post) throw new Error("Post not found");
 
   return post;
 }
 
-export async function createPostRecord(body) {
+export async function createPostRecord(body, user = null) {
   const type = requireString(body.type, "type");
   const category = requireString(body.category, "category");
   const title = requireString(body.title, "title");
@@ -37,26 +35,34 @@ export async function createPostRecord(body) {
     type,
     category,
     title,
-    content
+    content,
+    authorId: user?._id ?? null,
+    authorUsername: user?.username ?? "Guest",
   });
 }
 
 export async function updatePostRecord(idParam, body) {
-  const id = Number(idParam);
-  if (!Number.isFinite(id)) throw new Error("Invalid post id");
-
   const updates = {};
 
   if (body.type !== undefined) updates.type = requireString(body.type, "type");
   if (body.category !== undefined) updates.category = requireString(body.category, "category");
   if (body.title !== undefined) updates.title = requireString(body.title, "title");
   if (body.content !== undefined) updates.content = requireString(body.content, "content");
+
   if (body.likes !== undefined) {
     if (!Number.isInteger(body.likes) || body.likes < 0) {
       throw new Error("likes must be a non-negative integer");
     }
     updates.likes = body.likes;
   }
+
+  if (body.views !== undefined) {
+    if (!Number.isInteger(body.views) || body.views < 0) {
+      throw new Error("views must be a non-negative integer");
+    }
+    updates.views = body.views;
+  }
+
   if (body.comments !== undefined) {
     if (!Array.isArray(body.comments)) {
       throw new Error("comments must be an array");
@@ -64,12 +70,11 @@ export async function updatePostRecord(idParam, body) {
 
     updates.comments = body.comments.map((comment) => ({
       text: requireString(comment?.text, "comment text"),
-      author: typeof comment?.author === "string" && comment.author.trim()
-        ? comment.author.trim()
-        : "Guest",
-      timestamp: typeof comment?.timestamp === "string" && comment.timestamp.trim()
-        ? comment.timestamp.trim()
-        : new Date().toISOString()
+      authorId: comment?.authorId ?? null,
+      authorUsername:
+        typeof comment?.authorUsername === "string" && comment.authorUsername.trim()
+          ? comment.authorUsername.trim()
+          : "Guest",
     }));
   }
 
@@ -77,16 +82,20 @@ export async function updatePostRecord(idParam, body) {
     throw new Error("No valid fields provided to update");
   }
 
-  const updated = await updatePostById(id, updates);
+  const updated = await updatePostById(idParam, updates);
+  if (!updated) throw new Error("Post not found");
+
+  return updated;
+}
+
+export async function incrementPostViewsRecord(idParam) {
+  const updated = await incrementPostViews(idParam);
   if (!updated) throw new Error("Post not found");
 
   return updated;
 }
 
 export async function deletePostRecord(idParam) {
-  const id = Number(idParam);
-  if (!Number.isFinite(id)) throw new Error("Invalid post id");
-
-  const deleted = await deletePostById(id);
+  const deleted = await deletePostById(idParam);
   if (!deleted) throw new Error("Post not found");
 }

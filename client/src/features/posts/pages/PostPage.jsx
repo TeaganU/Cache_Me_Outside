@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { RelativeTime } from "../../../lib/RelativeTime";
-import { editableCategoryOptions, editablePostTypeOptions} from "../../skills/components/skillsOptions";
+import {
+    editableCategoryOptions,
+    editablePostTypeOptions,
+} from "../../skills/components/skillsOptions";
 import PostComments from "../components/PostComments";
 import { PATHS } from "../../../app/Routes";
 
 export default function PostPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -19,10 +23,12 @@ export default function PostPage() {
         title: "",
         content: "",
         category: "Hiking",
-        type: "question"
+        type: "question",
     });
 
     useEffect(() => {
+        let isMounted = true;
+
         async function fetchPost() {
             setLoading(true);
             setError("");
@@ -35,38 +41,65 @@ export default function PostPage() {
                 }
 
                 const data = await response.json();
+
+                if (!isMounted) return;
+
                 setPost(data);
                 setEditForm({
                     title: data.title || "",
                     content: data.content || "",
                     category: data.category || "Hiking",
-                    type: data.type || "question"
+                    type: data.type || "question",
                 });
+
+                try {
+                    const viewResponse = await fetch(`/api/posts/${id}/view`, {
+                        method: "POST",
+                    });
+
+                    if (viewResponse.ok) {
+                        const viewData = await viewResponse.json();
+
+                        if (isMounted && viewData.post) {
+                            setPost(viewData.post);
+                        }
+                    }
+                } catch {
+                    // Ignore view count errors so the page still loads
+                }
             } catch {
-                setError("Could not load post.");
+                if (isMounted) {
+                    setError("Could not load post.");
+                }
             } finally {
-                setLoading(false);
+                if (isMounted) {
+                    setLoading(false);
+                }
             }
         }
 
         fetchPost();
+
+        return () => {
+            isMounted = false;
+        };
     }, [id]);
 
     const handleEditChange = (e) => {
         setEditForm({
             ...editForm,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value,
         });
     };
 
     const saveEdit = async () => {
         try {
             const response = await fetch(`/api/posts/${id}`, {
-                method: "PUT",
+                method: "PATCH",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(editForm)
+                body: JSON.stringify(editForm),
             });
 
             const data = await response.json();
@@ -87,7 +120,7 @@ export default function PostPage() {
     const deletePost = async () => {
         try {
             const response = await fetch(`/api/posts/${id}`, {
-                method: "DELETE"
+                method: "DELETE",
             });
 
             const data = await response.json();
@@ -97,7 +130,7 @@ export default function PostPage() {
                 return;
             }
 
-            navigate("/skills");
+            navigate(PATHS.SKILLS);
         } catch {
             setActionMessage("Could not delete post.");
         }
@@ -108,13 +141,13 @@ export default function PostPage() {
 
         try {
             const response = await fetch(`/api/posts/${id}`, {
-                method: "PUT",
+                method: "PATCH",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    likes: (post.likes || 0) + 1
-                })
+                    likes: (post.likes || 0) + 1,
+                }),
             });
 
             const data = await response.json();
@@ -140,20 +173,20 @@ export default function PostPage() {
             ...(post.comments || []),
             {
                 text: commentText.trim(),
-                author: "Guest",
-                timestamp: new Date().toISOString()
-            }
+                authorId: null,
+                authorUsername: "Guest",
+            },
         ];
 
         try {
             const response = await fetch(`/api/posts/${id}`, {
-                method: "PUT",
+                method: "PATCH",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    comments: nextComments
-                })
+                    comments: nextComments,
+                }),
             });
 
             const data = await response.json();
@@ -173,11 +206,19 @@ export default function PostPage() {
     };
 
     if (loading) {
-        return <div className="mx-auto max-w-4xl px-6 py-8 text-gray-600">Loading...</div>;
+        return (
+            <div className="mx-auto max-w-4xl px-6 py-8 text-gray-600">
+                Loading...
+            </div>
+        );
     }
 
     if (error || !post) {
-        return <div className="mx-auto max-w-4xl px-6 py-8 text-red-600">{error || "Post not found."}</div>;
+        return (
+            <div className="mx-auto max-w-4xl px-6 py-8 text-red-600">
+                {error || "Post not found."}
+            </div>
+        );
     }
 
     return (
@@ -204,7 +245,7 @@ export default function PostPage() {
                             <span>{post.type}</span>
                         </div>
                         <span className="text-sm text-gray-500">
-                            {RelativeTime(post.timestamp)}
+                            {RelativeTime(post.createdAt)}
                         </span>
                     </div>
 
@@ -271,7 +312,7 @@ export default function PostPage() {
                             <div className="flex items-center gap-3">
                                 <div className="h-8 w-8 rounded-full bg-gray-200" />
                                 <span className="text-sm font-medium text-gray-800">
-                                    {post.author || "Author Name"}
+                                    {post.authorUsername || "Guest"}
                                 </span>
                             </div>
 
@@ -283,6 +324,10 @@ export default function PostPage() {
                                 >
                                     Like ({post.likes || 0})
                                 </button>
+
+                                <div className="border border-gray-300 px-3 py-2 text-sm text-gray-700">
+                                    Views ({post.views || 0})
+                                </div>
 
                                 {editing ? (
                                     <>
