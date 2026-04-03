@@ -56,6 +56,8 @@ export default function SkillsPostCard({
                     <div className="text-sm text-gray-600">
                         <span>{post.likes || 0} {(post.likes || 0) === 1 ? "Like" : "Likes"}</span>
                         <span className="mx-2">|</span>
+                        <span>{post.views || 0} {(post.views || 0) === 1 ? "View" : "Views"}</span>
+                        <span className="mx-2">|</span>
                         <span>{post.comments?.length || 0} {(post.comments?.length || 0) === 1 ? "Comment" : "Comments"}</span>
                     </div>
                 </div>

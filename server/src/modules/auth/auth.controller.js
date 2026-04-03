@@ -1,24 +1,20 @@
-import fs from "fs";
 import { registerUser, loginUser } from "./auth.service.js";
 
 export async function register(req, res) {
     try {
-        console.log("req.body:", req.body);
-        console.log("req.file:", req.file);
-
-        const profileImage = req.file ? `/uploads/profiles/${req.file.filename}` : "";
-
         const result = await registerUser({
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
-            profileImage,
+            profileImage: req.file
+                ? {
+                    contentType: req.file.mimetype,
+                    data: req.file.buffer,
+                }
+                : null,
         });
 
         if (!result.ok) {
-            if (req.file) {
-                fs.unlink(req.file.path, () => { });
-            }
             return res.status(result.status).json(result.errors);
         }
 

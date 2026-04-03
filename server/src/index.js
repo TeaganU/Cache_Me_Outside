@@ -8,6 +8,7 @@ import postsRoutes from "./modules/posts/posts.routes.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
 import reportsRoutes from "./modules/reports/reports.routes.js";
+import profileRoutes from "./modules/profile/profile.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,6 +33,7 @@ app.use("/api/posts", postsRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/reports", reportsRoutes);
+app.use("/api/profile", profileRoutes);
 app.use("/uploads", express.static(path.resolve(__dirname, "../uploads")));
 
 app.get("/", (req, res) => {
