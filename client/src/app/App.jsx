@@ -6,6 +6,7 @@ import Footer from "../components/ui/Footer";
 import SkillsPage from '../features/skills/pages/SkillsPage';
 import CreatePostPage from "../features/posts/pages/CreatePostPage";
 import PostPage from "../features/posts/pages/PostPage";
+import AdminPage from "../features/admin/pages/AdminPage";
 import { PATHS } from "./Routes"
 import SignupPage from '../features/auth/pages/SignUpPage';
 
@@ -23,6 +24,7 @@ function App() {
         <Route path={PATHS.LOGIN} element={<Login />} />
         <Route path={PATHS.SIGNUP} element={<SignupPage />} />
         <Route path={PATHS.PROFILE} element={<div className="p-8">Profile page</div>} />
+        <Route path={PATHS.ADMIN} element={<AdminPage />} />
       </Routes>
       <Footer />
     </div>

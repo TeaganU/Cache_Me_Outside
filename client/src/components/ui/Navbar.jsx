@@ -19,6 +19,7 @@ export default function Navbar() {
       <div className="flex items-center gap-6">
         <Link to={PATHS.HOME}>Home</Link>
         <Link to={PATHS.SKILLS}>Skills</Link>
+        {user?.role === "admin" && <Link to={PATHS.ADMIN}>Admin</Link>}
 
         {isLoggedIn ? (
           <>

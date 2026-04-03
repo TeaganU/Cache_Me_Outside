@@ -10,6 +10,7 @@ import { PATHS } from "../../../app/Routes";
 import { apiClient } from "../../../lib/ApiClient";
 import { useAuth } from "../../../lib/AuthContext";
 import { getImageUrl } from "../../../lib/getImageUrl";
+import ReportModal from "../../reports/components/ReportModal";
 
 export default function PostPage() {
     const { id } = useParams();
@@ -22,6 +23,7 @@ export default function PostPage() {
     const [actionMessage, setActionMessage] = useState("");
     const [editing, setEditing] = useState(false);
     const [isCreatingComment, setIsCreatingComment] = useState(false);
+    const [isReportingPost, setIsReportingPost] = useState(false);
     const [commentText, setCommentText] = useState("");
     const [editForm, setEditForm] = useState({
         title: "",
@@ -34,6 +36,11 @@ export default function PostPage() {
         user &&
         post &&
         (user.id === post.authorId || user.role === "admin");
+    const canReportPost =
+        isLoggedIn &&
+        user &&
+        post &&
+        user.id !== post.authorId;
 
     useEffect(() => {
         let isMounted = true;
@@ -293,6 +300,16 @@ export default function PostPage() {
                                     Views ({post.views || 0})
                                 </div>
 
+                                {canReportPost && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsReportingPost(true)}
+                                        className="px-1 py-2 text-sm text-red-600 hover:cursor-pointer hover:underline"
+                                    >
+                                        Report
+                                    </button>
+                                )}
+
                                 {canModifyPost && (
                                     <>
                                         {editing ? (
@@ -337,8 +354,10 @@ export default function PostPage() {
                 </article>
 
                 <PostComments
+                    postId={post._id}
                     comments={post.comments || []}
                     isLoggedIn={isLoggedIn}
+                    currentUserId={user?.id || ""}
                     isCreatingComment={isCreatingComment}
                     commentText={commentText}
                     onCommentTextChange={setCommentText}
@@ -348,6 +367,15 @@ export default function PostPage() {
                         setCommentText("");
                     }}
                     onSubmitComment={submitComment}
+                />
+
+                <ReportModal
+                    isOpen={isReportingPost}
+                    title="Report Post"
+                    description="Tell us why this post should be reviewed."
+                    endpoint={`/reports/posts/${post._id}`}
+                    onClose={() => setIsReportingPost(false)}
+                    onSubmitted={() => setActionMessage("Report submitted.")}
                 />
             </div>
         </div>
