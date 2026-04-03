@@ -1,9 +1,13 @@
 import { RelativeTime } from "../../../lib/RelativeTime";
+import { useState } from "react";
 import { getImageUrl } from "../../../lib/getImageUrl";
+import ReportModal from "../../reports/components/ReportModal";
 
 export default function PostComments({
+    postId,
     comments,
     isLoggedIn,
+    currentUserId,
     isCreatingComment,
     commentText,
     onCommentTextChange,
@@ -12,6 +16,8 @@ export default function PostComments({
     onSubmitComment
 }) {
     const safeComments = comments ?? [];
+    const [activeCommentId, setActiveCommentId] = useState("");
+    const [message, setMessage] = useState("");
 
     return (
         <section className="mt-6 border border-gray-300 bg-white p-4">
@@ -44,6 +50,10 @@ export default function PostComments({
                     {safeComments.map((comment, index) => {
                         const username = comment.authorUsername || "Guest";
                         const initials = username.slice(0, 2).toUpperCase();
+                        const canReportComment =
+                            isLoggedIn &&
+                            currentUserId &&
+                            currentUserId !== comment.authorId;
 
                         return (
                             <div key={comment._id ?? index} className="border border-gray-200 p-3">
@@ -74,11 +84,23 @@ export default function PostComments({
                                 <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">
                                     {comment.text}
                                 </p>
+
+                                {canReportComment && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveCommentId(comment._id)}
+                                        className="mt-3 text-sm text-red-600 hover:cursor-pointer hover:underline"
+                                    >
+                                        Report
+                                    </button>
+                                )}
                             </div>
                         );
                     })}
                 </div>
             )}
+
+            {message && <p className="mt-4 text-sm text-gray-700">{message}</p>}
 
             {isLoggedIn && isCreatingComment && (
                 <div className="mt-4 flex flex-col gap-3">
@@ -108,6 +130,15 @@ export default function PostComments({
                     </div>
                 </div>
             )}
+
+            <ReportModal
+                isOpen={Boolean(activeCommentId)}
+                title="Report Comment"
+                description="Tell us why this comment should be reviewed."
+                endpoint={`/reports/posts/${postId}/comments/${activeCommentId}`}
+                onClose={() => setActiveCommentId("")}
+                onSubmitted={() => setMessage("Report submitted.")}
+            />
         </section>
     );
 }

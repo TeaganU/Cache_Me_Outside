@@ -5,5 +5,6 @@ export const PATHS = {
     CREATEPOST: "/create-post",
     LOGIN: "/login",
     SIGNUP: "/signup",
-    PROFILE: "/profile"
+    PROFILE: "/profile",
+    ADMIN: "/admin",
 }
