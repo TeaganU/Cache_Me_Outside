@@ -10,6 +10,9 @@ const initialForm = {
     confirmPassword: "",
 };
 
+const emailRegex = /^(.+)@([^\.].*)\.([a-z]{2,})$/i;
+const usernameRegex = /^[a-zA-Z0-9_]+$/;
+
 export default function SignupPage() {
     const navigate = useNavigate();
     const [form, setForm] = useState(initialForm);
@@ -22,10 +25,29 @@ export default function SignupPage() {
     function handleChange(event) {
         const { name, value } = event.target;
         setForm((current) => ({ ...current, [name]: value }));
+        setErrors((current) => ({
+            ...current,
+            [name]: undefined,
+        }));
+
+        setGeneralError("");
     }
 
     function handleFileChange(event) {
         const file = event.target.files?.[0] ?? null;
+        const imageError = validateImage(file);
+
+        setErrors((current) => ({
+            ...current,
+            profileImage: imageError || undefined,
+        }));
+
+        if (imageError) {
+            setProfileImageFile(null);
+            setPreviewUrl("");
+            return;
+        }
+
         setProfileImageFile(file);
 
         if (file) {
@@ -35,20 +57,61 @@ export default function SignupPage() {
         }
     }
 
-    function validateForm() {
-        const nextErrors = {};
+    function validateImage(file) {
+        const MAX_IMAGE_SIZE = 1 * 1024 * 1024;
+        const ALLOWED_IMAGE_TYPES = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/gif",
+        ];
 
-        if (!form.username.trim()) nextErrors.username = "Username is required";
-        if (!form.email.trim()) nextErrors.email = "Email is required";
-        if (!form.password) nextErrors.password = "Password is required";
+        let error = ""
+
+        if (file) {
+            if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+                error = "Only JPG, PNG, WEBP, and GIF images are allowed";
+            } else if (file.size > MAX_IMAGE_SIZE) {
+                error = "Image must be 1 MB or smaller";
+            }
+        }
+
+        return error
+    }
+
+    function validateForm() {
+        const errors = {};
+        const cleanUsername = form.username.trim();
+        const cleanEmail = form.email.trim().toLowerCase();
+
+        if (!cleanUsername) {
+            errors.username = "Username is required";
+        } else if (cleanUsername.length < 3 || cleanUsername.length > 16) {
+            errors.username = "Username must be 3 to 16 characters";
+        } else if (!usernameRegex.test(cleanUsername)) {
+            errors.username = "Username can only contain letters, numbers, and underscores";
+        }
+
+        if (!cleanEmail) {
+            errors.email = "Email is required";
+        } else if (!emailRegex.test(cleanEmail)) {
+            errors.email = "Enter a valid email";
+        }
+
+        const imgError = validateImage(profileImageFile);
+        if (imgError) {
+            errors.profileImage = imgError;
+        }
+
+        if (!form.password) errors.password = "Password is required";
         if (form.password && form.password.length < 8) {
-            nextErrors.password = "Password must be at least 8 characters";
+            errors.password = "Password must be at least 8 characters";
         }
         if (form.confirmPassword !== form.password) {
-            nextErrors.confirmPassword = "Passwords do not match";
+            errors.confirmPassword = "Passwords do not match";
         }
 
-        return nextErrors;
+        return errors;
     }
 
     async function handleSubmit(event) {
@@ -137,6 +200,9 @@ export default function SignupPage() {
                             onChange={handleFileChange}
                             className="hidden"
                         />
+                        {errors.profileImage && (
+                            <p className="mt-1 text-sm text-red-600">{errors.profileImage}</p>
+                        )}
                     </div>
 
                     {previewUrl && (

@@ -293,22 +293,12 @@ export default function PostPage() {
                                     onClick={likePost}
                                     className="border border-gray-300 px-3 py-2 text-sm hover:cursor-pointer"
                                 >
-                                    Like ({post.likes || 0})
+                                    Likes ({post.likes || 0})
                                 </button>
 
                                 <div className="border border-gray-300 px-3 py-2 text-sm text-gray-700">
                                     Views ({post.views || 0})
                                 </div>
-
-                                {canReportPost && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsReportingPost(true)}
-                                        className="px-1 py-2 text-sm text-red-600 hover:cursor-pointer hover:underline"
-                                    >
-                                        Report
-                                    </button>
-                                )}
 
                                 {canModifyPost && (
                                     <>
@@ -347,6 +337,16 @@ export default function PostPage() {
                                             Delete
                                         </button>
                                     </>
+                                )}
+
+                                {canReportPost && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsReportingPost(true)}
+                                        className="px-1 py-2 text-sm text-red-600 hover:cursor-pointer hover:underline"
+                                    >
+                                        Report
+                                    </button>
                                 )}
                             </div>
                         </div>

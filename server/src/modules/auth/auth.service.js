@@ -5,6 +5,7 @@ import {
     findUserByUsername,
     createUser,
 } from "./auth.repository.js";
+import { toPublicUser } from "./auth.utils.js";
 
 const emailRegex = /^(.+)@([^\.].*)\.([a-z]{2,})$/i;
 const usernameRegex = /^[a-zA-Z0-9_]+$/;
@@ -63,19 +64,13 @@ export async function registerUser({ username, email, password, profileImage }) 
         username: cleanUsername,
         email: cleanEmail,
         passwordHash,
-        profileImage: profileImage ?? "",
+        profileImage: profileImage ?? undefined,
     });
 
     return {
         ok: true,
         status: 201,
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            profileImage: user.profileImage,
-            role: user.role,
-        },
+        user: toPublicUser(user),
     };
 }
 
@@ -137,12 +132,6 @@ export async function loginUser({ email, password }) {
         ok: true,
         status: 200,
         token,
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            profileImage: user.profileImage,
-            role: user.role,
-        },
+        user: toPublicUser(user),
     };
 }

@@ -8,6 +8,7 @@ import {
   incrementPostViews,
   incrementPostLikes
 } from "./posts.repository.js";
+import { getProfileImagePath } from "../auth/auth.utils.js";
 
 function requireString(value, fieldName) {
   if (typeof value !== "string" || value.trim() === "") {
@@ -56,7 +57,7 @@ export async function createPostRecord(body, user) {
     content,
     authorId: user._id,
     authorUsername: user.username,
-    authorProfileImage: user.profileImage ?? "",
+    authorProfileImage: getProfileImagePath(user._id, user.profileImage),
   });
 }
 
@@ -117,7 +118,7 @@ export async function addCommentRecord(idParam, body, user) {
     text,
     authorId: user._id,
     authorUsername: user.username,
-    authorProfileImage: user.profileImage ?? "",
+    authorProfileImage: getProfileImagePath(user._id, user.profileImage),
   });
 
   await post.save();
