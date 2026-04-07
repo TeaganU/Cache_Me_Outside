@@ -1,3 +1,6 @@
+import { PATHS } from "../../app/Routes";
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300">
@@ -7,10 +10,10 @@ export default function Footer() {
             Navigation
           </h3>
           <ul className="space-y-2">
-            <li><a href="#" className="hover:text-white transition">Home</a></li>
-            <li><a href="#" className="hover:text-white transition">Skills</a></li>
-            <li><a href="#" className="hover:text-white transition">Login</a></li>
-            <li><a href="#" className="hover:text-white transition">Sign Up</a></li>
+            <li><Link className="hover:text-white transition" to={PATHS.HOME}>Home</Link></li>
+            <li><Link className="hover:text-white transition" to={PATHS.SKILLS}>Skills</Link></li>
+            <li><Link className="hover:text-white transition" to={PATHS.LOGIN}>Login</Link></li>
+            <li><Link className="hover:text-white transition" to={PATHS.SIGNUP}>Sign Up</Link></li>
             <li><a href="#" className="hover:text-white transition">About Us</a></li>
             <li><a href="#" className="hover:text-white transition">Faqs</a></li>
           </ul>
