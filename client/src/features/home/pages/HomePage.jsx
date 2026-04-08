@@ -8,7 +8,7 @@ export default function HomePage() {
     const { isLoggedIn } = useAuth();
 
     return (
-        <main className="flex flex-col gap-5 px-8 py-4">
+        <main className="flex flex-col gap-5 px-8 py-4 min-h-screen bg-gray-100">
             {!isLoggedIn ? <WelcomeArea /> : <WelcomeBackArea />}
             <TrendingSkills />
             <RecentQuestions />

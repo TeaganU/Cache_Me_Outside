@@ -1,14 +1,35 @@
 export default function SkillsFilters({
     categoryOptions,
     postTypeOptions,
+    sortByOptions,
     selectedCategories,
     selectedTypes,
+    sortBy,
     onToggleCategory,
-    onToggleType
+    onToggleType,
+    onToggleSort
 }) {
     return (
         <aside className="w-full border border-gray-300 bg-white p-5 md:max-w-xs">
             <h2 className="text-2xl font-semibold text-gray-900">Filters</h2>
+            
+            <section className="mt-6">
+                <h3 className="text-lg font-medium text-gray-900">Sort By</h3>
+                <select
+                    className="mt-3 w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800"
+                    value={sortBy}
+                    onChange={(event) => onToggleSort(event.target.value)}
+                >
+                    {sortByOptions.map((option) => (
+                        <option
+                            key={option}
+                            value={option}
+                        >
+                            {option}
+                        </option>
+                    ))}
+                </select>
+            </section>
 
             <section className="mt-6">
                 <h3 className="text-lg font-medium text-gray-900">Categories</h3>
@@ -43,6 +64,6 @@ export default function SkillsFilters({
                     ))}
                 </div>
             </section>
-        </aside>
+        </aside >
     );
 }
