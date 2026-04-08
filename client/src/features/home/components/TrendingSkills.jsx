@@ -52,7 +52,7 @@ export default function TrendingSkills() {
     }, []);
 
     return (
-        <section className="flex flex-col border 2px black min-h-40 px-3 py-1.5 gap-y-2">
+        <section className="flex flex-col bg-gray-50 border 2px black min-h-40 px-3 py-1.5 gap-y-2">
             <div className="flex justify-between">
                 <h1 className="font-bold">
                     Trending Skills

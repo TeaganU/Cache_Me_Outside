@@ -18,10 +18,10 @@ export const postTypeOptions = [
 ];
 
 export const sortByOptions = [
+    "Upload Date",
     "Likes",
     "Views",
-    "Comments",
-    "Upload Date"
+    "Comments"
 ];
 
 export const editableCategoryOptions = [
