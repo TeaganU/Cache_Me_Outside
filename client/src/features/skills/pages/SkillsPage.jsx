@@ -5,8 +5,10 @@ import SkillsHeader from "../components/SkillsHeader";
 import SkillsPostList from "../components/SkillsPostList";
 import {
     categoryOptions,
-    postTypeOptions
+    postTypeOptions,
+    sortByOptions
 } from "../components/skillsOptions";
+
 export default function SkillsPage() {
     const resultInc = 10
     const [searchParams] = useSearchParams();
@@ -16,6 +18,7 @@ export default function SkillsPage() {
     const [error, setError] = useState("");
     const [selectedCategories, setSelectedCategories] = useState(["All"]);
     const [selectedTypes, setSelectedTypes] = useState(["All"]);
+    const [sortBy, setSortBy] = useState(["Upload Date"])
     const [resultLimit, setResultLimit] = useState(resultInc);
 
     useEffect(() => {
@@ -71,7 +74,7 @@ export default function SkillsPage() {
         }
 
         fetchResults();
-    }, [searchText, selectedCategories, selectedTypes]);
+    }, [searchText, selectedCategories, selectedTypes, sortBy]);
 
     // "All" acts like a reset; otherwise this toggles individual checkbox values.
     const toggleFilter = (value, selectedValues, setSelectedValues) => {

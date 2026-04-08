@@ -17,6 +17,13 @@ export const postTypeOptions = [
     "Event"
 ];
 
+export const sortByOptions = [
+    "Likes",
+    "Views",
+    "Comments",
+    "Upload Date"
+];
+
 export const editableCategoryOptions = [
     "Hiking",
     "Skiing",

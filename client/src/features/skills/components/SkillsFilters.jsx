@@ -1,3 +1,10 @@
+const FILTER_OPTIONS = [
+    { value: "likes", label: "Likes" },
+    { value: "views", label: "Views" },
+    { value: "comments", label: "Comments" },
+    { value: "createdAt", label: "Upload Date"},
+];
+
 export default function SkillsFilters({
     categoryOptions,
     postTypeOptions,
@@ -41,6 +48,13 @@ export default function SkillsFilters({
                             <span>{type}</span>
                         </label>
                     ))}
+                </div>
+            </section>
+
+            <section className="mt-6">
+                <h3 className="text-lg font-medium text-gray-900">Sort By</h3>
+                <div className="mt-3 space-y-2 text-base text-gray-800">
+
                 </div>
             </section>
         </aside>
