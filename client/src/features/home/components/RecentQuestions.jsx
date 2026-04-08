@@ -39,7 +39,7 @@ export default function RecentQuestions() {
     }, []);
 
     return (
-        <section className="flex flex-col border 2px black min-h-20 px-3 py-1.5 gap-2">
+        <section className="flex flex-col bg-gray-50 border 2px black min-h-20 px-3 py-1.5 gap-2">
             <div className="flex justify-between">
                 <h1 className="font-bold">
                     Recent Questions
