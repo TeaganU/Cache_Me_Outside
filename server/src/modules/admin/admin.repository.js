@@ -168,7 +168,6 @@ export async function searchUsersForAdmin(query, limit = 12) {
     $or: [
       { username: regex },
       { email: regex },
-      { fullName: regex },
       ...(matchedAuthorIds.length > 0 ? [{ _id: { $in: matchedAuthorIds } }] : []),
     ],
   };
@@ -191,7 +190,6 @@ export async function searchUsersForAdmin(query, limit = 12) {
     return {
       _id: user._id,
       username: user.username,
-      fullName: user.fullName || "",
       email: user.email,
       role: user.role,
       isDisabled: Boolean(user.isDisabled),

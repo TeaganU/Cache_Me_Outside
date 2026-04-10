@@ -8,10 +8,11 @@ import EditProfileModal from "../components/EditProfileModal";
 
 function StatCard({ label, value }) {
   return (
-    <div className="border border-gray-400 bg-white px-4 py-4">
-      <div className="h-4 w-4 border border-gray-700" />
-      <p className="mt-4 text-4xl font-semibold text-gray-900">{value}</p>
-      <p className="mt-2 text-sm text-gray-600">{label}</p>
+    <div className="border border-gray-400 bg-white px-5 py-5 shadow-sm">
+      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
+        {label}
+      </p>
+      <p className="mt-4 text-3xl font-semibold leading-none text-gray-900">{value}</p>
     </div>
   );
 }
@@ -69,13 +70,9 @@ export default function ProfilePage() {
     setMessage("");
 
     const formData = new FormData();
-    formData.append("fullName", nextForm.fullName);
     formData.append("username", nextForm.username);
     formData.append("bio", nextForm.bio);
-    formData.append("gender", nextForm.gender);
-    formData.append("country", nextForm.country);
     formData.append("email", nextForm.email);
-    formData.append("phoneNumber", nextForm.phoneNumber);
 
     if (profileImageFile) {
       formData.append("profileImage", profileImageFile);
@@ -87,14 +84,8 @@ export default function ProfilePage() {
       updateUser({
         id: response.profile.id,
         username: response.profile.username,
-        fullName: response.profile.fullName,
         email: response.profile.email,
         bio: response.profile.bio,
-        gender: response.profile.gender,
-        country: response.profile.country,
-        phoneNumber: response.profile.phoneNumber,
-        helpfulVotes: response.profile.helpfulVotes,
-        connections: response.profile.connections,
         profileImage: response.profile.profileImage,
         role: user?.role || "user",
       });
@@ -146,7 +137,7 @@ export default function ProfilePage() {
 
               <div>
                 <h1 className="text-3xl font-semibold text-gray-900">
-                  {profile.fullName || profile.username}
+                  {profile.username}
                 </h1>
                 <p className="mt-1 max-w-2xl text-sm text-gray-600">
                   {profile.bio || "Add a short bio so people know a little more about you."}
@@ -163,21 +154,20 @@ export default function ProfilePage() {
             </button>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <ProfileField label="Full Name" value={profile.fullName} />
+          <div className="flex flex-col mt-6 gap-4">
             <ProfileField label="Username" value={profile.username} />
-            <ProfileField label="Gender" value={profile.gender} />
-            <ProfileField label="Country" value={profile.country} />
             <ProfileField label="Email" value={profile.email} />
-            <ProfileField label="Phone Number" value={profile.phoneNumber} />
+            <ProfileField label="Role" value={user.role} />
           </div>
         </section>
 
-        <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <StatCard label="Posts Created" value={profile.stats?.postsCreated ?? 0} />
-          <StatCard label="Replies Given" value={profile.stats?.repliesGiven ?? 0} />
-          <StatCard label="Helpful Votes" value={profile.stats?.helpfulVotes ?? 0} />
-          <StatCard label="Connections" value={profile.stats?.connections ?? 0} />
+          <StatCard label="Comments Given" value={profile.stats?.repliesGiven ?? 0} />
+          <StatCard label="Likes Given" value={profile.stats?.likesGiven ?? 0} />
+          <StatCard label="Views Received" value={profile.stats?.viewsReceived ?? 0} />
+          <StatCard label="Comments Received" value={profile.stats?.commentsReceived ?? 0} />
+          <StatCard label="Likes Received" value={profile.stats?.likesReceived ?? 0} />
         </section>
       </div>
 
@@ -187,11 +177,7 @@ export default function ProfilePage() {
             profile.id,
             profile.username,
             profile.email,
-            profile.fullName,
             profile.bio,
-            profile.gender,
-            profile.country,
-            profile.phoneNumber,
             profile.profileImage,
           ].join("|")}
           isOpen={isEditing}

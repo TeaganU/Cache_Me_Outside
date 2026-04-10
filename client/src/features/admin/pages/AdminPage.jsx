@@ -423,7 +423,7 @@ export default function AdminPage() {
               type="text"
               value={searchInput}
               onChange={(event) => setSearchInput(event.target.value)}
-              placeholder="Search by username, email, full name, or post text"
+              placeholder="Search by username, email, or post text"
               className="flex-1 border border-gray-300 px-3 py-2"
             />
             <button
@@ -448,7 +448,6 @@ export default function AdminPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-semibold text-gray-900">{result.username}</p>
-                      {result.fullName && <p className="text-sm text-gray-600">{result.fullName}</p>}
                       <p className="text-sm text-gray-700">{result.email}</p>
                     </div>
 

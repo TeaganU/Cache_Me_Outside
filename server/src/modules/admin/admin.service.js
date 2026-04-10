@@ -157,7 +157,6 @@ export async function getDisabledUsersRecord() {
   return users.map((user) => ({
     _id: user._id,
     username: user.username,
-    fullName: user.fullName || "",
     email: user.email,
     isDisabled: Boolean(user.isDisabled),
   }));
