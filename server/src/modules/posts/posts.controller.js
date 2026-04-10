@@ -5,8 +5,7 @@ import {
   updatePostRecord,
   deletePostRecord,
   incrementPostViewsRecord,
-  addCommentRecord,
-  incrementPostLikesRecord
+  addCommentRecord
 } from "./posts.service.js";
 
 export async function getPosts(req, res) {
@@ -71,24 +70,6 @@ export async function addComment(req, res) {
     res.status(201).json({
       message: "Comment successfully added",
       comment
-    });
-  } catch (error) {
-    const status =
-      error.message === "Authentication required" ? 401 :
-        error.message === "Post not found" ? 404 :
-          400;
-
-    res.status(status).json({ message: error.message });
-  }
-}
-
-export async function incrementPostLikes(req, res) {
-  try {
-    const updated = await incrementPostLikesRecord(req.params.id, req.user);
-
-    res.json({
-      message: "Post like count updated",
-      post: updated
     });
   } catch (error) {
     const status =

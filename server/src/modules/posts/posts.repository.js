@@ -90,6 +90,18 @@ export async function updatePostById(id, updates) {
   ).lean();
 }
 
+export async function setPostLikesById(id, likes) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
+
+  return await Post.findByIdAndUpdate(
+    id,
+    { $set: { likes } },
+    { new: true }
+  ).lean();
+}
+
 export async function deletePostById(id) {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return false;
@@ -111,14 +123,3 @@ export async function incrementPostViews(id) {
   ).lean();
 }
 
-export async function incrementPostLikes(id) {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return null;
-  }
-
-  return await Post.findByIdAndUpdate(
-    id,
-    { $inc: { likes: 1 } },
-    { new: true }
-  ).lean();
-}
