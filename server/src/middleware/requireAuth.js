@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import { getDisabledAccountDetails, normalizeDisabledState } from "../modules/auth/auth.utils.js";
 
 export async function requireAuth(req, res, next) {
     try {
@@ -23,8 +24,14 @@ export async function requireAuth(req, res, next) {
             return res.status(401).json({ general: "User not found" });
         }
 
+        await normalizeDisabledState(user);
+
         if (user.isDisabled) {
-            return res.status(403).json({ general: "Account disabled" });
+            return res.status(403).json({
+                general: "This account has been disabled",
+                code: "ACCOUNT_BANNED",
+                ban: getDisabledAccountDetails(user),
+            });
         }
 
         req.user = user;

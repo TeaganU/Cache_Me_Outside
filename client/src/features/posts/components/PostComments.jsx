@@ -6,6 +6,7 @@ import ReportModal from "../../reports/components/ReportModal";
 export default function PostComments({
     postId,
     comments,
+    highlightedCommentId,
     isLoggedIn,
     currentUserId,
     isCreatingComment,
@@ -56,7 +57,15 @@ export default function PostComments({
                             currentUserId !== comment.authorId;
 
                         return (
-                            <div key={comment._id ?? index} className="border border-gray-200 p-3">
+                            <div
+                                key={comment._id ?? index}
+                                id={comment._id ? `comment-${comment._id}` : undefined}
+                                className={`border p-3 ${
+                                    highlightedCommentId === comment._id
+                                        ? "border-blue-500 bg-blue-50"
+                                        : "border-gray-200"
+                                }`}
+                            >
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="flex items-center gap-3">
                                         {comment.authorProfileImage ? (

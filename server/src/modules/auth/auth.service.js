@@ -5,7 +5,7 @@ import {
     findUserByUsername,
     createUser,
 } from "./auth.repository.js";
-import { toPublicUser } from "./auth.utils.js";
+import { getDisabledAccountDetails, normalizeDisabledState, toPublicUser } from "./auth.utils.js";
 
 const emailRegex = /^(.+)@([^\.].*)\.([a-z]{2,})$/i;
 const usernameRegex = /^[a-zA-Z0-9_]+$/;
@@ -102,11 +102,17 @@ export async function loginUser({ email, password }) {
         };
     }
 
+    await normalizeDisabledState(user);
+
     if (user.isDisabled) {
         return {
             ok: false,
             status: 403,
-            errors: { general: "This account has been disabled" },
+            errors: {
+                general: "This account has been disabled",
+                code: "ACCOUNT_BANNED",
+                ban: getDisabledAccountDetails(user),
+            },
         };
     }
 

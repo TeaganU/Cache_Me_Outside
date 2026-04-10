@@ -6,7 +6,7 @@ import { useAuth } from "../../../lib/AuthContext";
 
 export default function LoginForm() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { clearBanNotice, login, rememberBan } = useAuth();
 
   const [form, setForm] = useState({
     email: "",
@@ -27,6 +27,7 @@ export default function LoginForm() {
     setErrors({});
     setGeneralError("");
     setIsSubmitting(true);
+    clearBanNotice();
 
     try {
       const response = await apiClient.post("/auth/login", form);
@@ -34,6 +35,12 @@ export default function LoginForm() {
       navigate(PATHS.HOME);
     } catch (error) {
       const data = error?.data ?? {};
+      if (error?.status === 403 && data?.code === "ACCOUNT_BANNED") {
+        rememberBan(data.ban ?? null);
+        navigate(PATHS.BANNED);
+        return;
+      }
+
       setErrors(data);
       setGeneralError(data.general ?? "Could not log in");
     } finally {
