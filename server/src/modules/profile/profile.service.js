@@ -1,11 +1,15 @@
 import { toPublicUser } from "../auth/auth.utils.js";
 import {
     countCommentsByAuthor,
+    countCommentsOnAuthorPosts,
+    countLikesByUser,
+    countLikesOnAuthorPosts,
     countPostsByAuthor,
     findUserByEmail,
     findUserById,
     findUserByUsername,
     findUserProfileImageById,
+    sumViewsOnAuthorPosts,
     syncUserProfileOnPosts,
     updateUserById,
 } from "./profile.repository.js";
@@ -48,9 +52,20 @@ function optionalString(value, maxLength, fieldName) {
 }
 
 async function buildProfilePayload(user) {
-    const [postsCreated, repliesGiven] = await Promise.all([
+    const [
+        postsCreated,
+        repliesGiven,
+        likesGiven,
+        viewsReceived,
+        commentsReceived,
+        likesReceived,
+    ] = await Promise.all([
         countPostsByAuthor(user._id),
         countCommentsByAuthor(user._id),
+        countLikesByUser(user._id),
+        sumViewsOnAuthorPosts(user._id),
+        countCommentsOnAuthorPosts(user._id),
+        countLikesOnAuthorPosts(user._id),
     ]);
 
     return {
@@ -58,8 +73,10 @@ async function buildProfilePayload(user) {
         stats: {
             postsCreated,
             repliesGiven,
-            helpfulVotes: user.helpfulVotes ?? 0,
-            connections: user.connections ?? 0,
+            likesGiven,
+            viewsReceived,
+            commentsReceived,
+            likesReceived,
         },
     };
 }
@@ -87,24 +104,8 @@ export async function updateCurrentProfile(user, body, file) {
 
     const updates = {};
 
-    if (body.fullName !== undefined) {
-        updates.fullName = optionalString(body.fullName, 60, "fullName");
-    }
-
     if (body.bio !== undefined) {
         updates.bio = optionalString(body.bio, 280, "bio");
-    }
-
-    if (body.gender !== undefined) {
-        updates.gender = optionalString(body.gender, 30, "gender");
-    }
-
-    if (body.country !== undefined) {
-        updates.country = optionalString(body.country, 60, "country");
-    }
-
-    if (body.phoneNumber !== undefined) {
-        updates.phoneNumber = optionalString(body.phoneNumber, 30, "phoneNumber");
     }
 
     if (body.username !== undefined) {

@@ -9,13 +9,9 @@ export default function EditProfileModal({
   onSubmit,
 }) {
   const [form, setForm] = useState(() => ({
-    fullName: profile?.fullName || "",
     username: profile?.username || "",
     bio: profile?.bio || "",
-    gender: profile?.gender || "",
-    country: profile?.country || "",
     email: profile?.email || "",
-    phoneNumber: profile?.phoneNumber || "",
   }));
   const [profileImageFile, setProfileImageFile] = useState(null);
 
@@ -60,40 +56,10 @@ export default function EditProfileModal({
         <form onSubmit={handleSubmit} className="mt-5 space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block text-sm text-gray-700">
-              <span className="mb-1 block font-medium">Full Name</span>
-              <input
-                name="fullName"
-                value={form.fullName}
-                onChange={handleChange}
-                className="w-full border border-gray-300 px-3 py-2"
-              />
-            </label>
-
-            <label className="block text-sm text-gray-700">
               <span className="mb-1 block font-medium">Username</span>
               <input
                 name="username"
                 value={form.username}
-                onChange={handleChange}
-                className="w-full border border-gray-300 px-3 py-2"
-              />
-            </label>
-
-            <label className="block text-sm text-gray-700">
-              <span className="mb-1 block font-medium">Gender</span>
-              <input
-                name="gender"
-                value={form.gender}
-                onChange={handleChange}
-                className="w-full border border-gray-300 px-3 py-2"
-              />
-            </label>
-
-            <label className="block text-sm text-gray-700">
-              <span className="mb-1 block font-medium">Country</span>
-              <input
-                name="country"
-                value={form.country}
                 onChange={handleChange}
                 className="w-full border border-gray-300 px-3 py-2"
               />
@@ -105,16 +71,6 @@ export default function EditProfileModal({
                 name="email"
                 type="email"
                 value={form.email}
-                onChange={handleChange}
-                className="w-full border border-gray-300 px-3 py-2"
-              />
-            </label>
-
-            <label className="block text-sm text-gray-700">
-              <span className="mb-1 block font-medium">Phone Number</span>
-              <input
-                name="phoneNumber"
-                value={form.phoneNumber}
                 onChange={handleChange}
                 className="w-full border border-gray-300 px-3 py-2"
               />
@@ -132,15 +88,28 @@ export default function EditProfileModal({
             />
           </label>
 
-          <label className="block text-sm text-gray-700">
-            <span className="mb-1 block font-medium">Profile Image</span>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Profile Image</label>
+            <label
+              htmlFor="editProfileImage"
+              className="flex w-full cursor-pointer items-center justify-between border border-gray-300 px-3 py-2 text-sm text-gray-700"
+            >
+              <span className="truncate">
+                {profileImageFile ? profileImageFile.name : "Choose an image"}
+              </span>
+              <span className="ml-3 bg-black px-3 py-1 text-white">
+                Browse
+              </span>
+            </label>
             <input
+              id="editProfileImage"
+              name="profileImage"
               type="file"
               accept="image/png,image/jpeg,image/webp,image/gif"
               onChange={(event) => setProfileImageFile(event.target.files?.[0] ?? null)}
-              className="w-full border border-gray-300 px-3 py-2"
+              className="hidden"
             />
-          </label>
+          </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 

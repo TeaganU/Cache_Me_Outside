@@ -99,7 +99,6 @@ export default function AdminBannedUsersPage() {
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div>
                     <p className="font-semibold text-gray-900">{entry.username}</p>
-                    {entry.fullName && <p className="text-sm text-gray-600">{entry.fullName}</p>}
                     <p className="mt-1 text-sm text-gray-700">{entry.email}</p>
                     <p className="mt-3 text-sm text-gray-700">
                       <span className="font-semibold">Status:</span> Disabled

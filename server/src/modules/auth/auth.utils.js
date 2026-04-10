@@ -24,14 +24,8 @@ export function toPublicUser(user) {
     return {
         id: user._id,
         username: user.username,
-        fullName: user.fullName || "",
         email: user.email,
         bio: user.bio || "",
-        gender: user.gender || "",
-        country: user.country || "",
-        phoneNumber: user.phoneNumber || "",
-        helpfulVotes: user.helpfulVotes ?? 0,
-        connections: user.connections ?? 0,
         profileImage: getProfileImagePath(user._id, user.profileImage),
         role: user.role,
     };

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import User from "../../models/User.js";
 import Post from "../../models/Post.js";
+import Like from "../../models/Likes.js";
 import { getProfileImagePath } from "../auth/auth.utils.js";
 
 export async function findUserProfileImageById(id) {
@@ -28,6 +29,54 @@ export async function countCommentsByAuthor(authorId) {
         { $unwind: "$comments" },
         { $match: { "comments.authorId": new mongoose.Types.ObjectId(String(authorId)) } },
         { $count: "total" },
+    ]);
+
+    return result[0]?.total ?? 0;
+}
+
+export async function countLikesByUser(userId) {
+    return await Like.countDocuments({ userId });
+}
+
+export async function countLikesOnAuthorPosts(authorId) {
+    const authoredPosts = await Post.find({ authorId }, { _id: 1 }).lean();
+    const postIds = authoredPosts.map((post) => post._id);
+
+    if (postIds.length === 0) {
+        return 0;
+    }
+
+    return await Like.countDocuments({ postId: { $in: postIds } });
+}
+
+export async function sumViewsOnAuthorPosts(authorId) {
+    const result = await Post.aggregate([
+        { $match: { authorId: new mongoose.Types.ObjectId(String(authorId)) } },
+        {
+            $group: {
+                _id: null,
+                total: { $sum: "$views" },
+            },
+        },
+    ]);
+
+    return result[0]?.total ?? 0;
+}
+
+export async function countCommentsOnAuthorPosts(authorId) {
+    const result = await Post.aggregate([
+        { $match: { authorId: new mongoose.Types.ObjectId(String(authorId)) } },
+        {
+            $project: {
+                commentCount: { $size: { $ifNull: ["$comments", []] } },
+            },
+        },
+        {
+            $group: {
+                _id: null,
+                total: { $sum: "$commentCount" },
+            },
+        },
     ]);
 
     return result[0]?.total ?? 0;
