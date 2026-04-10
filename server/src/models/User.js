@@ -19,6 +19,46 @@ const userSchema = new mongoose.Schema(
             unique: true,
             match: /^(.+)@([^\.].*)\.([a-z]{2,})$/i,
         },
+        fullName: {
+            type: String,
+            trim: true,
+            maxlength: 60,
+            default: "",
+        },
+        bio: {
+            type: String,
+            trim: true,
+            maxlength: 280,
+            default: "",
+        },
+        gender: {
+            type: String,
+            trim: true,
+            maxlength: 30,
+            default: "",
+        },
+        country: {
+            type: String,
+            trim: true,
+            maxlength: 60,
+            default: "",
+        },
+        phoneNumber: {
+            type: String,
+            trim: true,
+            maxlength: 30,
+            default: "",
+        },
+        helpfulVotes: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        connections: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
         passwordHash: {
             type: String,
             required: true,

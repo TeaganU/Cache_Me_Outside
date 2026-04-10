@@ -1,4 +1,8 @@
-import { getProfileImageRecord } from "./profile.service.js";
+import {
+    getCurrentProfile,
+    getProfileImageRecord,
+    updateCurrentProfile,
+} from "./profile.service.js";
 
 export async function getProfileImage(req, res) {
     try {
@@ -9,6 +13,39 @@ export async function getProfileImage(req, res) {
         res.send(profileImage.data);
     } catch (error) {
         const status = error.message === "Profile image not found" ? 404 : 500;
+        res.status(status).json({ message: error.message });
+    }
+}
+
+export async function getMyProfile(req, res) {
+    try {
+        const profile = await getCurrentProfile(req.user);
+        res.json(profile);
+    } catch (error) {
+        const status =
+            error.message === "Authentication required" ? 401 :
+                error.message === "User not found" ? 404 :
+                    400;
+
+        res.status(status).json({ message: error.message });
+    }
+}
+
+export async function updateMyProfile(req, res) {
+    try {
+        const profile = await updateCurrentProfile(req.user, req.body, req.file);
+
+        res.json({
+            message: "Profile updated successfully",
+            profile,
+        });
+    } catch (error) {
+        const status =
+            error.message === "Authentication required" ? 401 :
+                error.message === "User not found" ? 404 :
+                    error.message === "Username already taken" || error.message === "Email already in use" ? 409 :
+                        400;
+
         res.status(status).json({ message: error.message });
     }
 }

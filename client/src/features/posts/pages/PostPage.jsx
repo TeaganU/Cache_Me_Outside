@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { RelativeTime } from "../../../lib/RelativeTime";
 import {
     editableCategoryOptions,
@@ -15,7 +15,9 @@ import ReportModal from "../../reports/components/ReportModal";
 export default function PostPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { isLoggedIn, user } = useAuth();
+    const highlightedCommentId = searchParams.get("commentId") || "";
 
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -120,6 +122,18 @@ export default function PostPage() {
             isMounted = false;
         };
     }, [id, isLoggedIn]);
+
+    useEffect(() => {
+        if (!highlightedCommentId || !post) {
+            return;
+        }
+
+        const target = document.getElementById(`comment-${highlightedCommentId}`);
+
+        if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }, [highlightedCommentId, post]);
 
     const handleEditChange = (e) => {
         setEditForm({
@@ -384,6 +398,7 @@ export default function PostPage() {
                 <PostComments
                     postId={post._id}
                     comments={post.comments || []}
+                    highlightedCommentId={highlightedCommentId}
                     isLoggedIn={isLoggedIn}
                     currentUserId={user?.id || ""}
                     isCreatingComment={isCreatingComment}

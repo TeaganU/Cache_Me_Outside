@@ -10,7 +10,7 @@ const initialForm = {
     confirmPassword: "",
 };
 
-const emailRegex = /^(.+)@([^\.].*)\.([a-z]{2,})$/i;
+const emailRegex = /^(.+)@([^.].*)\.([a-z]{2,})$/i;
 const usernameRegex = /^[a-zA-Z0-9_]+$/;
 
 export default function SignupPage() {

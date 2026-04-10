@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:4000/api";
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "/api").replace(/\/$/, "");
 const TOKEN_KEY = "authToken";
 
 async function request(path, options = {}) {
@@ -23,6 +23,10 @@ async function request(path, options = {}) {
     }
 
     if (!response.ok) {
+        if (response.status === 403 && data?.code === "ACCOUNT_BANNED" && typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("auth:banned", { detail: data?.ban ?? null }));
+        }
+
         const error = new Error(data?.general || data?.message || "Request failed");
         error.status = response.status;
         error.data = data;
