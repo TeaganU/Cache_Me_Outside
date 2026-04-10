@@ -15,8 +15,6 @@ import AdminBannedUsersPage from "../features/admin/pages/AdminBannedUsersPage";
 import BannedPage from "../features/auth/pages/BannedPage";
 import NotFoundPage from './NotFoundPage';
 
-//note: for lab 7, temporarily added a create post button on home page, to be changed later
-
 function AppLayout() {
   const location = useLocation();
   const { banNotice, isLoggedIn } = useAuth();
