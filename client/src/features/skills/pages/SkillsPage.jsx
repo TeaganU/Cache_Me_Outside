@@ -33,7 +33,7 @@ export default function SkillsPage() {
 
     useEffect(() => {
         setResultLimit(resultInc);
-    }, [searchText, selectedCategories, selectedTypes, sortBy]);
+    }, [searchParams.toString()]);
 
     useEffect(() => {
         async function fetchResults() {
@@ -131,6 +131,11 @@ export default function SkillsPage() {
                         <SkillsPostList posts={results.slice(0, resultLimit)} />
                     )}
 
+                    {!loading && !error && (
+                        <p className="flex mt-4 justify-center text-gray-600">
+                            Displaying {results.length < resultLimit ? results.length : resultLimit} of {results.length} posts.
+                        </p>
+                    )}
                     {!loading && !error && results.length > resultLimit && (
                         <div className="flex mt-4 justify-center">
                             <button

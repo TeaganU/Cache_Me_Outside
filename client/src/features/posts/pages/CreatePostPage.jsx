@@ -84,7 +84,7 @@ function CreatePostPage() {
                     onChange={handleChange}
                 />
 
-                <button className="bg-blue-500 p-2 text-white">
+                <button className="bg-blue-500 p-2 text-white hover:cursor-pointer">
                     Submit Post
                 </button>
             </form>
