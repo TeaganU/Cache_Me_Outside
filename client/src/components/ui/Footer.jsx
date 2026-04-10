@@ -15,7 +15,7 @@ export default function Footer() {
             <li><Link className="hover:text-white transition" to={PATHS.LOGIN}>Login</Link></li>
             <li><Link className="hover:text-white transition" to={PATHS.SIGNUP}>Sign Up</Link></li>
             <li><a href="#" className="hover:text-white transition">About Us</a></li>
-            <li><a href="#" className="hover:text-white transition">Faqs</a></li>
+            <li><a href="#" className="hover:text-white transition">FAQs</a></li>
           </ul>
         </div>
         <div>

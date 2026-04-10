@@ -5,8 +5,10 @@ import SkillsHeader from "../components/SkillsHeader";
 import SkillsPostList from "../components/SkillsPostList";
 import {
     categoryOptions,
-    postTypeOptions
+    postTypeOptions,
+    sortByOptions
 } from "../components/skillsOptions";
+
 export default function SkillsPage() {
     const resultInc = 10
     const [searchParams] = useSearchParams();
@@ -16,11 +18,12 @@ export default function SkillsPage() {
     const [error, setError] = useState("");
     const [selectedCategories, setSelectedCategories] = useState(["All"]);
     const [selectedTypes, setSelectedTypes] = useState(["All"]);
+    const [sortBy, setSortBy] = useState("Upload Date");
     const [resultLimit, setResultLimit] = useState(resultInc);
 
     useEffect(() => {
         setResultLimit(resultInc);
-    }, [searchText, selectedCategories, selectedTypes]);
+    }, [searchText, selectedCategories, selectedTypes, sortBy]);
 
     useEffect(() => {
         async function fetchResults() {
@@ -88,20 +91,39 @@ export default function SkillsPage() {
         setSelectedValues(nextValues.length > 0 ? nextValues : ["All"]);
     };
 
+    const sortedResults = [...results].sort((a, b) => {
+        if (sortBy === "Likes") {
+            return (b.likes || 0) - (a.likes || 0);
+        }
+
+        if (sortBy === "Views") {
+            return (b.views || 0) - (a.views || 0);
+        }
+
+        if (sortBy === "Comments") {
+            return (b.comments?.length || 0) - (a.comments?.length || 0);
+        }
+
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-8 md:flex-row">
                 <SkillsFilters
                     categoryOptions={categoryOptions}
                     postTypeOptions={postTypeOptions}
+                    sortByOptions={sortByOptions}
                     selectedCategories={selectedCategories}
                     selectedTypes={selectedTypes}
+                    sortBy={sortBy}
                     onToggleCategory={(category) =>
                         toggleFilter(category, selectedCategories, setSelectedCategories)
                     }
                     onToggleType={(type) =>
                         toggleFilter(type, selectedTypes, setSelectedTypes)
                     }
+                    onToggleSort={setSortBy}
                 />
 
                 <main className="flex flex-col min-w-0 flex-1">
@@ -111,11 +133,11 @@ export default function SkillsPage() {
 
                     {error && <p className="text-red-600">{error}</p>}
 
-                    {!loading && !error && results.length > 0 && (
-                        <SkillsPostList posts={results.slice(0, resultLimit)} />
+                    {!loading && !error && sortedResults.length > 0 && (
+                        <SkillsPostList posts={sortedResults.slice(0, resultLimit)} />
                     )}
 
-                    {!loading && !error && results.length > resultLimit && (
+                    {!loading && !error && sortedResults.length > resultLimit && (
                         <div className="flex mt-4 justify-center">
                             <button
                                 type="button"
@@ -127,7 +149,7 @@ export default function SkillsPage() {
                         </div>
                     )}
 
-                    {!loading && !error && results.length === 0 && (
+                    {!loading && !error && sortedResults.length === 0 && (
                         <p className="text-gray-600">
                             {searchText
                                 ? "No matching results found for this search and filter combination."
