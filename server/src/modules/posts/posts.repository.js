@@ -9,7 +9,8 @@ function normalizeToArray(value) {
   const values = Array.isArray(value) ? value : [value];
 
   return values
-    .map((item) => String(item).trim())
+    .flatMap((item) => String(item).split(","))
+    .map((item) => item.trim())
     .filter((item) => item !== "" && item !== "All");
 }
 
@@ -46,9 +47,35 @@ function buildQuery({ search, category, type, authorId }) {
   return query;
 }
 
+function buildSort(sort) {
+  if (sort === "likes") {
+    return { likes: -1, createdAt: -1 };
+  }
+
+  if (sort === "views") {
+    return { views: -1, createdAt: -1 };
+  }
+
+  if (sort === "comments") {
+    return { commentsCount: -1, createdAt: -1 };
+  }
+
+  return { createdAt: -1 };
+}
+
 export async function findPosts(filters = {}) {
   const query = buildQuery(filters);
-  return await Post.find(query).sort({ createdAt: -1 }).lean();
+  const sort = buildSort(filters.sort);
+
+  return await Post.aggregate([
+    { $match: query },
+    {
+      $addFields: {
+        commentsCount: { $size: { $ifNull: ["$comments", []] } }
+      }
+    },
+    { $sort: sort }
+  ]);
 }
 
 export async function findPostById(id) {
@@ -90,6 +117,18 @@ export async function updatePostById(id, updates) {
   ).lean();
 }
 
+export async function setPostLikesById(id, likes) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return null;
+  }
+
+  return await Post.findByIdAndUpdate(
+    id,
+    { $set: { likes } },
+    { new: true }
+  ).lean();
+}
+
 export async function deletePostById(id) {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return false;
@@ -111,14 +150,3 @@ export async function incrementPostViews(id) {
   ).lean();
 }
 
-export async function incrementPostLikes(id) {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return null;
-  }
-
-  return await Post.findByIdAndUpdate(
-    id,
-    { $inc: { likes: 1 } },
-    { new: true }
-  ).lean();
-}

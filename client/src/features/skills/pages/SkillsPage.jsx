@@ -9,16 +9,26 @@ import {
     sortByOptions
 } from "../components/skillsOptions";
 
+function getSelectedValues(searchParams, key) {
+    const values = searchParams
+        .get(key)
+        ?.split(",")
+        .map((value) => value.trim())
+        .filter(Boolean);
+
+    return values && values.length > 0 ? values : ["All"];
+}
+
 export default function SkillsPage() {
-    const resultInc = 10
-    const [searchParams] = useSearchParams();
+    const resultInc = 10;
+    const [searchParams, setSearchParams] = useSearchParams();
     const searchText = searchParams.get("search") || "";
+    const selectedCategories = getSelectedValues(searchParams, "category");
+    const selectedTypes = getSelectedValues(searchParams, "type");
+    const sortBy = searchParams.get("sort") || "uploadDate";
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [selectedCategories, setSelectedCategories] = useState(["All"]);
-    const [selectedTypes, setSelectedTypes] = useState(["All"]);
-    const [sortBy, setSortBy] = useState("Upload Date");
     const [resultLimit, setResultLimit] = useState(resultInc);
 
     useEffect(() => {
@@ -31,31 +41,8 @@ export default function SkillsPage() {
             setError("");
 
             try {
-                const params = new URLSearchParams();
-
-                // Preserve the navbar search term in the API request.
-                if (searchText.trim()) {
-                    params.set("search", searchText.trim());
-                }
-
-                // Append each selected category so the backend can treat them
-                // as repeated query params.
-                selectedCategories
-                    .filter((category) => category !== "All")
-                    .forEach((category) => {
-                        params.append("category", category);
-                    });
-
-                // Append each selected type the same way.
-                selectedTypes
-                    .filter((type) => type !== "All")
-                    .forEach((type) => {
-                        params.append("type", type);
-                    });
-
-                // If no filters are active, just fetch all posts.
-                const endpoint = params.toString()
-                    ? `/api/posts?${params.toString()}`
+                const endpoint = searchParams.toString()
+                    ? `/api/posts?${searchParams.toString()}`
                     : "/api/posts";
                 const response = await fetch(endpoint);
 
@@ -74,12 +61,19 @@ export default function SkillsPage() {
         }
 
         fetchResults();
-    }, [searchText, selectedCategories, selectedTypes]);
+    }, [searchParams]);
 
-    // "All" acts like a reset; otherwise this toggles individual checkbox values.
-    const toggleFilter = (value, selectedValues, setSelectedValues) => {
+    function updateSearchParams(updateFn) {
+        const nextParams = new URLSearchParams(searchParams);
+        updateFn(nextParams);
+        setSearchParams(nextParams);
+    }
+
+    const toggleFilter = (key, value, selectedValues) => {
         if (value === "All") {
-            setSelectedValues(["All"]);
+            updateSearchParams((params) => {
+                params.delete(key);
+            });
             return;
         }
 
@@ -88,24 +82,15 @@ export default function SkillsPage() {
             ? withoutAll.filter((item) => item !== value)
             : [...withoutAll, value];
 
-        setSelectedValues(nextValues.length > 0 ? nextValues : ["All"]);
+        updateSearchParams((params) => {
+            if (nextValues.length === 0) {
+                params.delete(key);
+                return;
+            }
+
+            params.set(key, nextValues.join(","));
+        });
     };
-
-    const sortedResults = [...results].sort((a, b) => {
-        if (sortBy === "Likes") {
-            return (b.likes || 0) - (a.likes || 0);
-        }
-
-        if (sortBy === "Views") {
-            return (b.views || 0) - (a.views || 0);
-        }
-
-        if (sortBy === "Comments") {
-            return (b.comments?.length || 0) - (a.comments?.length || 0);
-        }
-
-        return new Date(b.createdAt) - new Date(a.createdAt);
-    });
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -118,12 +103,21 @@ export default function SkillsPage() {
                     selectedTypes={selectedTypes}
                     sortBy={sortBy}
                     onToggleCategory={(category) =>
-                        toggleFilter(category, selectedCategories, setSelectedCategories)
+                        toggleFilter("category", category, selectedCategories)
                     }
                     onToggleType={(type) =>
-                        toggleFilter(type, selectedTypes, setSelectedTypes)
+                        toggleFilter("type", type, selectedTypes)
                     }
-                    onToggleSort={setSortBy}
+                    onToggleSort={(value) =>
+                        updateSearchParams((params) => {
+                            if (!value || value === "uploadDate") {
+                                params.delete("sort");
+                                return;
+                            }
+
+                            params.set("sort", value);
+                        })
+                    }
                 />
 
                 <main className="flex flex-col min-w-0 flex-1">
@@ -133,11 +127,11 @@ export default function SkillsPage() {
 
                     {error && <p className="text-red-600">{error}</p>}
 
-                    {!loading && !error && sortedResults.length > 0 && (
-                        <SkillsPostList posts={sortedResults.slice(0, resultLimit)} />
+                    {!loading && !error && results.length > 0 && (
+                        <SkillsPostList posts={results.slice(0, resultLimit)} />
                     )}
 
-                    {!loading && !error && sortedResults.length > resultLimit && (
+                    {!loading && !error && results.length > resultLimit && (
                         <div className="flex mt-4 justify-center">
                             <button
                                 type="button"
@@ -149,7 +143,7 @@ export default function SkillsPage() {
                         </div>
                     )}
 
-                    {!loading && !error && sortedResults.length === 0 && (
+                    {!loading && !error && results.length === 0 && (
                         <p className="text-gray-600">
                             {searchText
                                 ? "No matching results found for this search and filter combination."

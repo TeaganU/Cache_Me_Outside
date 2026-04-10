@@ -5,8 +5,7 @@ import {
   findPosts,
   updatePostById,
   deletePostById,
-  incrementPostViews,
-  incrementPostLikes
+  incrementPostViews
 } from "./posts.repository.js";
 import { getProfileImagePath } from "../auth/auth.utils.js";
 
@@ -31,8 +30,8 @@ function canModifyPost(post, user) {
   );
 }
 
-export async function searchPosts({ search, category, type }) {
-  return await findPosts({ search, category, type });
+export async function searchPosts({ search, category, type, sort }) {
+  return await findPosts({ search, category, type, sort });
 }
 
 export async function getPostRecord(idParam) {
@@ -124,15 +123,6 @@ export async function addCommentRecord(idParam, body, user) {
   await post.save();
 
   return post.comments[post.comments.length - 1];
-}
-
-export async function incrementPostLikesRecord(idParam, user) {
-  requireAuthenticatedUser(user);
-
-  const updated = await incrementPostLikes(idParam);
-  if (!updated) throw new Error("Post not found");
-
-  return updated;
 }
 
 export async function incrementPostViewsRecord(idParam) {

@@ -22,10 +22,10 @@ export default function SkillsFilters({
                 >
                     {sortByOptions.map((option) => (
                         <option
-                            key={option}
-                            value={option}
+                            key={option.value}
+                            value={option.value}
                         >
-                            {option}
+                            {option.label}
                         </option>
                     ))}
                 </select>

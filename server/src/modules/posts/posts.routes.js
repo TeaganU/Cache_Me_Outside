@@ -6,8 +6,7 @@ import {
     updatePost,
     deletePost,
     incrementPostViews,
-    addComment,
-    incrementPostLikes,
+    addComment
 } from "./posts.controller.js";
 import { requireAuth } from "../../middleware/requireAuth.js";
 
@@ -16,7 +15,6 @@ const router = express.Router();
 router.get("/", getPosts);
 router.get("/:id", getPost);
 router.post("/:id/view", incrementPostViews);
-router.post("/:id/like", requireAuth, incrementPostLikes);
 
 router.post("/", requireAuth, createPost);
 router.patch("/:id", requireAuth, updatePost);

@@ -14,17 +14,14 @@ export default function RecentQuestions() {
             setError("");
 
             try {
-                const response = await fetch("/api/posts");
+                const response = await fetch("/api/posts?type=Question");
 
                 if (!response.ok) {
                     throw new Error("Failed to fetch posts");
                 }
 
                 const data = await response.json();
-                const recentPosts = [...data]
-                    .filter((type) => type.type === "Question")
-                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                    .slice(0, 5);
+                const recentPosts = data.slice(0, 5);
 
                 setPosts(recentPosts);
             } catch {
@@ -46,7 +43,7 @@ export default function RecentQuestions() {
                 </h1>
 
                 <Link
-                    to={`${PATHS.SKILLS}?search=${encodeURIComponent("question")}`}
+                    to={`${PATHS.SKILLS}?type=${encodeURIComponent("Question")}`}
                     className="text-gray-700">
                     View All
                 </Link>

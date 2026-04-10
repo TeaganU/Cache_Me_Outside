@@ -5,15 +5,14 @@ import {
   updatePostRecord,
   deletePostRecord,
   incrementPostViewsRecord,
-  addCommentRecord,
-  incrementPostLikesRecord
+  addCommentRecord
 } from "./posts.service.js";
 
 export async function getPosts(req, res) {
-  const { search, category, type } = req.query;
+  const { search, category, type, sort } = req.query;
 
   try {
-    const results = await searchPosts({ search, category, type });
+    const results = await searchPosts({ search, category, type, sort });
     res.json(results);
   } catch (err) {
     res.status(500).json({ message: "Error fetching posts" });
@@ -71,24 +70,6 @@ export async function addComment(req, res) {
     res.status(201).json({
       message: "Comment successfully added",
       comment
-    });
-  } catch (error) {
-    const status =
-      error.message === "Authentication required" ? 401 :
-        error.message === "Post not found" ? 404 :
-          400;
-
-    res.status(status).json({ message: error.message });
-  }
-}
-
-export async function incrementPostLikes(req, res) {
-  try {
-    const updated = await incrementPostLikesRecord(req.params.id, req.user);
-
-    res.json({
-      message: "Post like count updated",
-      post: updated
     });
   } catch (error) {
     const status =

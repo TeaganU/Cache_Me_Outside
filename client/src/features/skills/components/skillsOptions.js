@@ -18,10 +18,10 @@ export const postTypeOptions = [
 ];
 
 export const sortByOptions = [
-    "Upload Date",
-    "Likes",
-    "Views",
-    "Comments"
+    { value: "uploadDate", label: "Upload Date" },
+    { value: "likes", label: "Likes" },
+    { value: "views", label: "Views" },
+    { value: "comments", label: "Comments" }
 ];
 
 export const editableCategoryOptions = [
