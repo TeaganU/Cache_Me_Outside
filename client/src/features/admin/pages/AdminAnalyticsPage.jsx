@@ -47,29 +47,119 @@ function SummaryCard({ label, value }) {
   );
 }
 
-function SimpleBarChart({ data, metric }) {
-  const maxValue = Math.max(...data.map((entry) => entry[metric] ?? 0), 1);
+function SimpleLineChart({ data, metric }) {
+  const width = 760;
+  const height = 280;
+  const padding = { top: 20, right: 20, bottom: 42, left: 42 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  const values = data.map((entry) => entry[metric] ?? 0);
+  const maxValue = Math.max(...values, 1);
+  const stepX = data.length > 1 ? chartWidth / (data.length - 1) : chartWidth;
+
+  const points = data.map((entry, index) => {
+    const value = entry[metric] ?? 0;
+    const x = padding.left + stepX * index;
+    const y = padding.top + chartHeight - (value / maxValue) * chartHeight;
+
+    return {
+      ...entry,
+      value,
+      x,
+      y,
+    };
+  });
+
+  const linePath = points
+    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`)
+    .join(" ");
+
+  const yAxisTicks = Array.from({ length: 5 }, (_, index) => {
+    const value = Math.round((maxValue / 4) * (4 - index));
+    const y = padding.top + (chartHeight / 4) * index;
+
+    return { value, y };
+  });
 
   return (
     <div className="border border-gray-300 bg-white p-4">
-      <div className="flex h-56 items-end gap-2 border-b border-l border-gray-300 px-3 pb-3 pt-4">
-        {data.map((entry) => {
-          const value = entry[metric] ?? 0;
-          const height = Math.max((value / maxValue) * 100, value > 0 ? 10 : 0);
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full">
+        {yAxisTicks.map((tick) => (
+          <g key={`${tick.value}-${tick.y}`}>
+            <line
+              x1={padding.left}
+              y1={tick.y}
+              x2={width - padding.right}
+              y2={tick.y}
+              stroke="#d1d5db"
+              strokeWidth="1"
+            />
+            <text
+              x={padding.left - 8}
+              y={tick.y + 4}
+              textAnchor="end"
+              fontSize="11"
+              fill="#6b7280"
+            >
+              {tick.value}
+            </text>
+          </g>
+        ))}
 
-          return (
-            <div key={entry.date} className="flex flex-1 flex-col items-center justify-end gap-2">
-              <span className="text-xs text-gray-600">{value}</span>
-              <div
-                className="w-full max-w-10 bg-gray-900"
-                style={{ height: `${height}%` }}
-                title={`${entry.label}: ${value}`}
-              />
-              <span className="text-center text-[11px] text-gray-500">{entry.label}</span>
-            </div>
-          );
-        })}
-      </div>
+        <line
+          x1={padding.left}
+          y1={padding.top}
+          x2={padding.left}
+          y2={height - padding.bottom}
+          stroke="#374151"
+          strokeWidth="1.5"
+        />
+        <line
+          x1={padding.left}
+          y1={height - padding.bottom}
+          x2={width - padding.right}
+          y2={height - padding.bottom}
+          stroke="#374151"
+          strokeWidth="1.5"
+        />
+
+        {points.length > 1 && (
+          <path
+            d={linePath}
+            fill="none"
+            stroke="#111827"
+            strokeWidth="2.5"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+        )}
+
+        {points.map((point, index) => (
+          <g key={point.date}>
+            <circle cx={point.x} cy={point.y} r="4" fill="#111827" />
+            <text
+              x={point.x}
+              y={point.y - 10}
+              textAnchor="middle"
+              fontSize="11"
+              fill="#4b5563"
+            >
+              {point.value}
+            </text>
+            {(data.length <= 14 || index % 2 === 0 || index === data.length - 1) && (
+              <text
+                x={point.x}
+                y={height - padding.bottom + 18}
+                textAnchor="middle"
+                fontSize="11"
+                fill="#6b7280"
+              >
+                {point.label}
+              </text>
+            )}
+          </g>
+        ))}
+      </svg>
     </div>
   );
 }
@@ -193,7 +283,7 @@ export default function AdminAnalyticsPage() {
                   {analytics?.filters?.start} to {analytics?.filters?.end}.
                 </p>
                 <div className="mt-4">
-                  <SimpleBarChart data={analytics?.chartData ?? []} metric={metric} />
+                  <SimpleLineChart data={analytics?.chartData ?? []} metric={metric} />
                 </div>
               </div>
 
