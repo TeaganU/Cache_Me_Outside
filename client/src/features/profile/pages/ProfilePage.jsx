@@ -5,6 +5,7 @@ import { apiClient } from "../../../lib/ApiClient";
 import { useAuth } from "../../../lib/AuthContext";
 import { getImageUrl } from "../../../lib/getImageUrl";
 import EditProfileModal from "../components/EditProfileModal";
+import ProfilePosts from "../components/ProfilePosts";
 
 function StatCard({ label, value }) {
   return (
@@ -168,6 +169,10 @@ export default function ProfilePage() {
           <StatCard label="Views Received" value={profile.stats?.viewsReceived ?? 0} />
           <StatCard label="Comments Received" value={profile.stats?.commentsReceived ?? 0} />
           <StatCard label="Likes Received" value={profile.stats?.likesReceived ?? 0} />
+        </section>
+
+        <section className="flex flex-col mt-6 gap-4">
+          <ProfilePosts />
         </section>
       </div>
 

@@ -2,6 +2,8 @@ import {
     getCurrentProfile,
     getProfileImageRecord,
     updateCurrentProfile,
+    getCurrentUserPosts,
+    getCurrentUserComments,
 } from "./profile.service.js";
 
 export async function getProfileImage(req, res) {
@@ -45,6 +47,42 @@ export async function updateMyProfile(req, res) {
                 error.message === "User not found" ? 404 :
                     error.message === "Username already taken" || error.message === "Email already in use" ? 409 :
                         400;
+
+        res.status(status).json({ message: error.message });
+    }
+}
+
+export async function getMyPosts(req, res) {
+    try {
+        const posts = await getCurrentUserPosts(req.user);
+
+        res.json({
+            message: "Posts loaded successfully",
+            posts,
+        });
+    } catch (error) {
+        const status =
+            error.message === "Authentication required" ? 401 :
+                error.message === "User not found" ? 404 :
+                    400;
+
+        res.status(status).json({ message: error.message });
+    }
+}
+
+export async function getMyComments(req, res) {
+    try {
+        const comments = await getCurrentUserComments(req.user);
+
+        res.json({
+            message: "Comments loaded successfully",
+            comments,
+        });
+    } catch (error) {
+        const status =
+            error.message === "Authentication required" ? 401 :
+                error.message === "User not found" ? 404 :
+                    400;
 
         res.status(status).json({ message: error.message });
     }

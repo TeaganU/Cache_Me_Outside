@@ -112,3 +112,26 @@ export async function syncUserProfileOnPosts(user) {
         }
     );
 }
+
+export async function findPostsByAuthorId(authorId) {
+    return await Post.find({ authorId }).sort({ createdAt: -1 }).lean();
+}
+
+export async function findCommentsByAuthorId(authorId) {
+    return await Post.aggregate([
+        { $unwind: "$comments" },
+        { $match: { "comments.authorId": new mongoose.Types.ObjectId(String(authorId)) } },
+        {
+            $project: {
+                _id: "$comments._id",
+                text: "$comments.text",
+                createdAt: "$comments.createdAt",
+                postId: "$_id",
+                postTitle: "$title",
+                postCategory: "$category",
+                postType: "$type",
+            },
+        },
+        { $sort: { createdAt: -1 } },
+    ]);
+}

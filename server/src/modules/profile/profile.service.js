@@ -12,6 +12,8 @@ import {
     sumViewsOnAuthorPosts,
     syncUserProfileOnPosts,
     updateUserById,
+    findPostsByAuthorId,
+    findCommentsByAuthorId,
 } from "./profile.repository.js";
 
 const emailRegex = /^(.+)@([^\.].*)\.([a-z]{2,})$/i;
@@ -172,4 +174,16 @@ export async function updateCurrentProfile(user, body, file) {
     await syncUserProfileOnPosts(updatedUser);
 
     return await buildProfilePayload(updatedUser);
+}
+
+export async function getCurrentUserPosts(user) {
+    requireAuthenticatedUser(user)
+
+    return await findPostsByAuthorId(user._id);
+}
+
+export async function getCurrentUserComments(user) {
+    requireAuthenticatedUser(user)
+
+    return await findCommentsByAuthorId(user._id);
 }

@@ -5,21 +5,20 @@ const likeSchema = new mongoose.Schema(
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            default: null,
+            required: true,
         },
-
         postId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Post",
-            default: null,
+            required: true,
         },
     },
-
     {
-        _id: true,
         timestamps: true,
         versionKey: false
     }
 );
+
+likeSchema.index({userId: 1, postId: 1}, {unique: true});
 
 export default mongoose.model("Like", likeSchema);
