@@ -37,7 +37,7 @@ npm start
 
 Make sure you are in the root directory   
 
-```bash
+```
 docker compose up --build
 ```
 
@@ -48,7 +48,7 @@ Then open:
 
 ### Stop Docker
 
-```bash
+```
 docker compose down -v
 ```
 
