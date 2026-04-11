@@ -50,7 +50,7 @@ function SummaryCard({ label, value }) {
 function SimpleLineChart({ data, metric }) {
   const width = 760;
   const height = 280;
-  const padding = { top: 20, right: 20, bottom: 42, left: 42 };
+  const padding = { top: 20, right: 44, bottom: 72, left: 42 };
   const chartWidth = width - padding.left - padding.right;
   const chartHeight = height - padding.top - padding.bottom;
   const values = data.map((entry) => entry[metric] ?? 0);
@@ -146,17 +146,16 @@ function SimpleLineChart({ data, metric }) {
             >
               {point.value}
             </text>
-            {(data.length <= 14 || index % 2 === 0 || index === data.length - 1) && (
-              <text
-                x={point.x}
-                y={height - padding.bottom + 18}
-                textAnchor="middle"
-                fontSize="11"
-                fill="#6b7280"
-              >
-                {point.label}
-              </text>
-            )}
+            <text
+              x={point.x - 2}
+              y={height - padding.bottom + 18}
+              textAnchor="end"
+              fontSize="11"
+              fill="#6b7280"
+              transform={`rotate(-45 ${point.x - 2} ${height - padding.bottom + 18})`}
+            >
+              {point.label}
+            </text>
           </g>
         ))}
       </svg>
