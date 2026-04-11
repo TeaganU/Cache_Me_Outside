@@ -67,7 +67,7 @@ export async function createPostRecord(body, user) {
     content,
     authorId: user._id,
     authorUsername: user.username,
-    authorProfileImage: getProfileImagePath(user._id, user.profileImage),
+    authorProfileImage: getProfileImagePath(user._id, user.profileImage, user.updatedAt),
   });
 }
 
@@ -128,7 +128,7 @@ export async function addCommentRecord(idParam, body, user) {
     text,
     authorId: user._id,
     authorUsername: user.username,
-    authorProfileImage: getProfileImagePath(user._id, user.profileImage),
+    authorProfileImage: getProfileImagePath(user._id, user.profileImage, user.updatedAt),
   });
 
   await post.save();

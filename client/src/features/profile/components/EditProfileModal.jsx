@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function EditProfileModal({
   isOpen,
@@ -14,6 +14,7 @@ export default function EditProfileModal({
     email: profile?.email || "",
   }));
   const [profileImageFile, setProfileImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   if (!isOpen || !profile) {
     return null;
@@ -26,6 +27,25 @@ export default function EditProfileModal({
       [name]: value,
     }));
   }
+
+  function handleFileChange(event) {
+    const file = event.target.files?.[0] ?? null;
+    setProfileImageFile(file);
+
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file));
+    } else {
+      setPreviewUrl("");
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -106,10 +126,18 @@ export default function EditProfileModal({
               name="profileImage"
               type="file"
               accept="image/png,image/jpeg,image/webp,image/gif"
-              onChange={(event) => setProfileImageFile(event.target.files?.[0] ?? null)}
+              onChange={handleFileChange}
               className="hidden"
             />
           </div>
+
+          {previewUrl && (
+            <img
+              src={previewUrl}
+              alt="Profile preview"
+              className="h-20 w-20 rounded-full border object-cover"
+            />
+          )}
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 

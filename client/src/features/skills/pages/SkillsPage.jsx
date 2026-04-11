@@ -20,7 +20,7 @@ function getSelectedValues(searchParams, key) {
 }
 
 export default function SkillsPage() {
-    const resultInc = 10;
+    const resultInc = 5;
     const [searchParams, setSearchParams] = useSearchParams();
     const searchText = searchParams.get("search") || "";
     const selectedCategories = getSelectedValues(searchParams, "category");
@@ -136,15 +136,26 @@ export default function SkillsPage() {
                             Displaying {results.length < resultLimit ? results.length : resultLimit} of {results.length} posts.
                         </p>
                     )}
-                    {!loading && !error && results.length > resultLimit && (
-                        <div className="flex mt-4 justify-center">
-                            <button
-                                type="button"
-                                onClick={() => setResultLimit((current) => current + resultInc)}
-                                className="border border-gray-400 bg-gray-200 rounded-lg px-2 py-1 hover:cursor-pointer"
-                            >
-                                Load More
-                            </button>
+                    {!loading && !error && (
+                        <div className="flex mt-4 justify-center gap-2">
+                            {results.length > resultLimit && (
+                                <button
+                                    type="button"
+                                    onClick={() => setResultLimit((current) => current + resultInc)}
+                                    className="border border-gray-400 bg-gray-200 rounded-lg px-2 py-1 hover:cursor-pointer"
+                                >
+                                    Show More
+                                </button>
+                            )}
+                            {resultLimit > resultInc && (
+                                <button
+                                    type="button"
+                                    onClick={() => setResultLimit((current) => current - resultInc)}
+                                    className="border border-gray-400 bg-gray-200 rounded-lg px-2 py-1 hover:cursor-pointer"
+                                >
+                                    Show Less
+                                </button>
+                            )}
                         </div>
                     )}
 

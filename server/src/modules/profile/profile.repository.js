@@ -87,7 +87,7 @@ export async function updateUserById(id, updates) {
 }
 
 export async function syncUserProfileOnPosts(user) {
-    const authorProfileImage = getProfileImagePath(user._id, user.profileImage);
+    const authorProfileImage = getProfileImagePath(user._id, user.profileImage, user.updatedAt);
 
     await Post.updateMany(
         { authorId: user._id },

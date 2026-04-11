@@ -1,9 +1,18 @@
-export function getProfileImagePath(userId, profileImage) {
+export function getProfileImagePath(userId, profileImage, version = "") {
     if (!userId || !profileImage?.data || !profileImage?.contentType) {
         return "";
     }
 
-    return `/api/profile/${userId}/image`;
+    const versionToken =
+        version instanceof Date
+            ? version.getTime()
+            : typeof version === "string" || typeof version === "number"
+                ? version
+                : "";
+
+    return versionToken
+        ? `/api/profile/${userId}/image?v=${encodeURIComponent(String(versionToken))}`
+        : `/api/profile/${userId}/image`;
 }
 
 export function getDisabledAccountDetails(user) {
@@ -26,7 +35,7 @@ export function toPublicUser(user) {
         username: user.username,
         email: user.email,
         bio: user.bio || "",
-        profileImage: getProfileImagePath(user._id, user.profileImage),
+        profileImage: getProfileImagePath(user._id, user.profileImage, user.updatedAt),
         role: user.role,
     };
 }
