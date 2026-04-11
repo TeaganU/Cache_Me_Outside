@@ -12,7 +12,7 @@ export default function Navbar() {
   return (
     <nav className="flex items-center justify-between border-b bg-white px-8 py-4">
       <div className="flex items-center gap-6 text-lg font-bold">
-        Outdoor Skill Sharing
+        <Link to={PATHS.HOME}>Outdoor Skill Sharing</Link>
         <Searchbar />
       </div>
 
