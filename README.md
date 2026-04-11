@@ -25,6 +25,33 @@ From the root directory:
 npm start
 ```
 
+## Docker
+
+### Docker Services
+
+- mongo for the database
+- server for the Express API
+- client for the Vite frontend
+
+### Start With Docker
+
+Make sure you are in the root directory   
+
+```
+docker compose up --build
+```
+
+Then open:
+
+- Frontend: http://localhost:5173
+- Backend: http://localhost:4000 (not much going on here)
+
+### Stop Docker
+
+```
+docker compose down -v
+```
+
 ## Project Proposal
 
 Duties of each team member:
@@ -93,5 +120,4 @@ The site should work in all browsers with responsive layouts for mobile devices
 
 Link to our proposed design on Figma:
 https://www.figma.com/design/lSrssBYxDJEZIBw0CfxiZZ/Client-Side-Experience?node-id=15-304&t=Z4DyMs10LKGvURjp-1
-
 
