@@ -6,7 +6,9 @@ import {
     updatePost,
     deletePost,
     incrementPostViews,
-    addComment
+    addComment,
+    updateComment,
+    deleteComment
 } from "./posts.controller.js";
 import { requireAuth } from "../../middleware/requireAuth.js";
 
@@ -20,5 +22,7 @@ router.post("/", requireAuth, createPost);
 router.patch("/:id", requireAuth, updatePost);
 router.delete("/:id", requireAuth, deletePost);
 router.post("/:id/comments", requireAuth, addComment);
+router.patch("/:id/comments/:commentId", requireAuth, updateComment);
+router.delete("/:id/comments/:commentId", requireAuth, deleteComment);
 
 export default router;

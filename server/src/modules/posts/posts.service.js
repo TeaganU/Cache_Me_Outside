@@ -30,6 +30,17 @@ function canModifyPost(post, user) {
   );
 }
 
+function canModifyComment(comment, user) {
+  if (!comment?.authorId || !user?._id) {
+    return user?.role === "admin";
+  }
+
+  return (
+    comment.authorId.toString() === user._id.toString() ||
+    user.role === "admin"
+  );
+}
+
 export async function searchPosts({ search, category, type, sort }) {
   return await findPosts({ search, category, type, sort });
 }
@@ -123,6 +134,42 @@ export async function addCommentRecord(idParam, body, user) {
   await post.save();
 
   return post.comments[post.comments.length - 1];
+}
+
+export async function updateCommentRecord(idParam, commentId, body, user) {
+  requireAuthenticatedUser(user);
+
+  const post = await findPostDocumentById(idParam);
+  if (!post) throw new Error("Post not found");
+
+  const comment = post.comments.id(commentId);
+  if (!comment) throw new Error("Comment not found");
+
+  if (!canModifyComment(comment, user)) {
+    throw new Error("Not allowed to edit this comment");
+  }
+
+  comment.text = requireString(body.text, "comment text");
+  await post.save();
+
+  return comment;
+}
+
+export async function deleteCommentRecord(idParam, commentId, user) {
+  requireAuthenticatedUser(user);
+
+  const post = await findPostDocumentById(idParam);
+  if (!post) throw new Error("Post not found");
+
+  const comment = post.comments.id(commentId);
+  if (!comment) throw new Error("Comment not found");
+
+  if (!canModifyComment(comment, user)) {
+    throw new Error("Not allowed to delete this comment");
+  }
+
+  comment.deleteOne();
+  await post.save();
 }
 
 export async function incrementPostViewsRecord(idParam) {

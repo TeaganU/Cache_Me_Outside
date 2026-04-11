@@ -9,16 +9,22 @@ export default function PostComments({
     highlightedCommentId,
     isLoggedIn,
     currentUserId,
+    currentUserRole,
     isCreatingComment,
     commentText,
     onCommentTextChange,
     onOpenCreateComment,
     onCancelCreateComment,
-    onSubmitComment
+    onSubmitComment,
+    onEditComment,
+    onDeleteComment
 }) {
     const safeComments = comments ?? [];
     const [activeCommentId, setActiveCommentId] = useState("");
     const [message, setMessage] = useState("");
+    const [editingCommentId, setEditingCommentId] = useState("");
+    const [editingText, setEditingText] = useState("");
+    const [busyCommentId, setBusyCommentId] = useState("");
 
     return (
         <section className="mt-6 border border-gray-300 bg-white p-4">
@@ -51,10 +57,15 @@ export default function PostComments({
                     {safeComments.map((comment, index) => {
                         const username = comment.authorUsername || "Guest";
                         const initials = username.slice(0, 2).toUpperCase();
+                        const canManageComment =
+                            isLoggedIn &&
+                            currentUserId &&
+                            (currentUserId === comment.authorId || currentUserRole === "admin");
                         const canReportComment =
                             isLoggedIn &&
                             currentUserId &&
-                            currentUserId !== comment.authorId;
+                            currentUserId !== comment.authorId &&
+                            currentUserRole !== "admin";
 
                         return (
                             <div
@@ -90,19 +101,89 @@ export default function PostComments({
                                     </span>
                                 </div>
 
-                                <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">
-                                    {comment.text}
-                                </p>
+                                {editingCommentId === comment._id ? (
+                                    <div className="mt-2 space-y-3">
+                                        <textarea
+                                            value={editingText}
+                                            onChange={(event) => setEditingText(event.target.value)}
+                                            rows={3}
+                                            className="w-full border border-gray-300 px-3 py-2 text-sm"
+                                        />
+                                        <div className="flex gap-3">
+                                            <button
+                                                type="button"
+                                                disabled={busyCommentId === comment._id}
+                                                onClick={async () => {
+                                                    setBusyCommentId(comment._id);
+                                                    const ok = await onEditComment(comment._id, editingText);
+                                                    setBusyCommentId("");
 
-                                {canReportComment && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setActiveCommentId(comment._id)}
-                                        className="mt-3 text-sm text-red-600 hover:cursor-pointer hover:underline"
-                                    >
-                                        Report
-                                    </button>
+                                                    if (ok) {
+                                                        setEditingCommentId("");
+                                                        setEditingText("");
+                                                    }
+                                                }}
+                                                className="bg-black px-3 py-2 text-sm text-white disabled:cursor-not-allowed hover:cursor-pointer"
+                                            >
+                                                Save
+                                            </button>
+                                            <button
+                                                type="button"
+                                                disabled={busyCommentId === comment._id}
+                                                onClick={() => {
+                                                    setEditingCommentId("");
+                                                    setEditingText("");
+                                                }}
+                                                className="border border-gray-300 px-3 py-2 text-sm disabled:cursor-not-allowed hover:cursor-pointer"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">
+                                        {comment.text}
+                                    </p>
                                 )}
+
+                                <div className="mt-3 flex flex-wrap gap-3">
+                                    {canManageComment && editingCommentId !== comment._id && (
+                                        <>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setEditingCommentId(comment._id);
+                                                    setEditingText(comment.text || "");
+                                                }}
+                                                className="text-sm text-gray-700 hover:cursor-pointer hover:underline"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                type="button"
+                                                disabled={busyCommentId === comment._id}
+                                                onClick={async () => {
+                                                    setBusyCommentId(comment._id);
+                                                    await onDeleteComment(comment._id);
+                                                    setBusyCommentId("");
+                                                }}
+                                                className="text-sm text-red-600 disabled:cursor-not-allowed hover:cursor-pointer hover:underline"
+                                            >
+                                                Delete
+                                            </button>
+                                        </>
+                                    )}
+
+                                    {canReportComment && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setActiveCommentId(comment._id)}
+                                            className="text-sm text-red-600 hover:cursor-pointer hover:underline"
+                                        >
+                                            Report
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         );
                     })}

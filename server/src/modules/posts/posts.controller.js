@@ -5,7 +5,9 @@ import {
   updatePostRecord,
   deletePostRecord,
   incrementPostViewsRecord,
-  addCommentRecord
+  addCommentRecord,
+  updateCommentRecord,
+  deleteCommentRecord
 } from "./posts.service.js";
 
 export async function getPosts(req, res) {
@@ -76,6 +78,45 @@ export async function addComment(req, res) {
       error.message === "Authentication required" ? 401 :
         error.message === "Post not found" ? 404 :
           400;
+
+    res.status(status).json({ message: error.message });
+  }
+}
+
+export async function updateComment(req, res) {
+  try {
+    const comment = await updateCommentRecord(req.params.id, req.params.commentId, req.body, req.user);
+
+    res.json({
+      message: "Comment successfully updated",
+      comment
+    });
+  } catch (error) {
+    const status =
+      error.message === "Authentication required" ? 401 :
+        error.message === "Post not found" ? 404 :
+          error.message === "Comment not found" ? 404 :
+            error.message === "Not allowed to edit this comment" ? 403 :
+              400;
+
+    res.status(status).json({ message: error.message });
+  }
+}
+
+export async function deleteComment(req, res) {
+  try {
+    await deleteCommentRecord(req.params.id, req.params.commentId, req.user);
+
+    res.json({
+      message: "Comment successfully deleted"
+    });
+  } catch (error) {
+    const status =
+      error.message === "Authentication required" ? 401 :
+        error.message === "Post not found" ? 404 :
+          error.message === "Comment not found" ? 404 :
+            error.message === "Not allowed to delete this comment" ? 403 :
+              400;
 
     res.status(status).json({ message: error.message });
   }

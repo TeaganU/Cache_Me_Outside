@@ -205,6 +205,45 @@ export default function PostPage() {
         }
     };
 
+    const editComment = async (commentId, nextText) => {
+        if (!nextText.trim()) {
+            setActionMessage("Comment text cannot be empty.");
+            return false;
+        }
+
+        try {
+            const data = await apiClient.patch(`/posts/${id}/comments/${commentId}`, {
+                text: nextText.trim(),
+            });
+
+            setPost((current) => ({
+                ...current,
+                comments: (current.comments ?? []).map((comment) =>
+                    comment._id === commentId ? data.comment : comment
+                ),
+            }));
+            setActionMessage("");
+            return true;
+        } catch (error) {
+            setActionMessage(error?.data?.message || "Could not update comment.");
+            return false;
+        }
+    };
+
+    const deleteComment = async (commentId) => {
+        try {
+            await apiClient.delete(`/posts/${id}/comments/${commentId}`);
+
+            setPost((current) => ({
+                ...current,
+                comments: (current.comments ?? []).filter((comment) => comment._id !== commentId),
+            }));
+            setActionMessage("");
+        } catch (error) {
+            setActionMessage(error?.data?.message || "Could not delete comment.");
+        }
+    };
+
     if (loading) {
         return (
             <div className="mx-auto max-w-4xl px-6 py-8 text-gray-600">
@@ -401,6 +440,7 @@ export default function PostPage() {
                     highlightedCommentId={highlightedCommentId}
                     isLoggedIn={isLoggedIn}
                     currentUserId={user?.id || ""}
+                    currentUserRole={user?.role || ""}
                     isCreatingComment={isCreatingComment}
                     commentText={commentText}
                     onCommentTextChange={setCommentText}
@@ -410,6 +450,8 @@ export default function PostPage() {
                         setCommentText("");
                     }}
                     onSubmitComment={submitComment}
+                    onEditComment={editComment}
+                    onDeleteComment={deleteComment}
                 />
 
                 <ReportModal
